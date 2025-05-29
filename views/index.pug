@@ -1,6 +1,17 @@
 extends layout
 
 block content
-  h1 Bienvenido al módulo HIS Internación
-  p Sistema de admisión y gestión de pacientes hospitalarios.
-  a.btn.btn-primary(href="/admision") Iniciar admisión
+block content
+  style.
+    body {
+      background-color: #dcebf8;
+    }
+  .container.d-flex.align-items-center.justify-content-center(style="min-height: 90vh;")
+    .text-center
+      img(src="/img/sistemhisimg.png" alt="Logo HIS" width="200" class="mb-4")
+      h1.display-5.fw-bold.text-dark Bienvenido al módulo HIS Internación
+      p.lead.text-muted Sistema de admisión y gestión de pacientes hospitalarios.
+
+      a.btn.btn-primary.btn-lg.mt-4(href="/admision")
+        i.fas.fa-user-plus.me-2
+        | Iniciar Admisión
