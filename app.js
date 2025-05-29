@@ -11,7 +11,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/", (req, res) => {
   res.render("index");
 });
+app.get("/admision", (req, res) => {
+  res.render("admision");
+});
 
+app.post("/admision", (req, res) => {
+  console.log(req.body);
+  res.send("Admisión registrada (simulado)");
+});
 app.listen(3000, () => {
   console.log("Servidor corriendo en http://localhost:3000");
 });

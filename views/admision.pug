@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h2 Registro de Admisión de Paciente
+
+  form(action="/admision" method="POST")
+    .mb-3
+      label.form-label(for="nombre") Nombre completo
+      input.form-control(type="text" id="nombre" name="nombre" required)
+
+    .mb-3
+      label.form-label(for="dni") DNI
+      input.form-control(type="number" id="dni" name="dni" required)
+
+    .mb-3
+      label.form-label(for="sexo") Sexo
+      select.form-select(id="sexo" name="sexo" required)
+        option(value="" disabled selected) Seleccione...
+        option(value="M") Masculino
+        option(value="F") Femenino
+
+    .mb-3
+      label.form-label(for="motivo") Motivo de internación
+      textarea.form-control(id="motivo" name="motivo" rows="3" required)
+
+    .mb-3
+      label.form-label(for="fechaIngreso") Fecha de ingreso
+      input.form-control(type="date" id="fechaIngreso" name="fechaIngreso" required)
+
+    button.btn.btn-primary(type="submit") Registrar admisión
+    a.btn.btn-secondary(href="/") Cancelar
