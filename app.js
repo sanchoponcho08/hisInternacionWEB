@@ -26,7 +26,9 @@ app.get("/pacientes", (req, res) => {
 app.get("/internacion", (req, res) => {
   res.render("internacion");
 });
-
+app.get("/camas", (req, res) => {
+  res.render("camas");
+});
 app.use((req, res) => {
   res.status(404).render("error");
 });

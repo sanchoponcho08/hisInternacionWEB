@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  .row
+    .col-md-2.bg-primary.text-white.p-3.rounded-start
+      h5 Filtros
+      ul.nav.flex-column
+        li.nav-item.mb-2
+          a.btn.btn-light.w-100(href="#") Todas las camas
+        li.nav-item.mb-2
+          a.btn.btn-light.w-100(href="#") Camas Libres
+        li.nav-item.mb-2
+          a.btn.btn-light.w-100(href="#") Camas Ocupadas
+        li.nav-item
+          a.btn.btn-light.w-100(href="#") Camas Higienizando
+
+    
+    .col-md-10
+      h3.text-center.mb-4 Estado de Camas
+
+      .row
+        each ala in [1, 2, 3]
+          .col-md-4.mb-4
+            .card.shadow
+              .card-header.bg-primary.text-white.text-center Ala #{ala}
+              .card-body
+                each habitacion in ['A', 'B', 'C']
+                  .mb-3
+                    h6.text-center Habitación #{habitacion}
+                    .d-flex.justify-content-center.gap-3.flex-wrap
+                      each cama in [1, 2]
+                        .text-center
+                          .bg-light.p-3.rounded.shadow-sm(style="width: 60px;")
+                            img(src="/img/hospital-bed.png"
+                            width="30")
+                            div.mt-1 #{cama}
