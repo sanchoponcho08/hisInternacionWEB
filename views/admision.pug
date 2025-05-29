@@ -1,58 +1,60 @@
 extends layout
 
 block content
-  .container
-    .row.justify-content-center
-      .col-md-8
-        .card.shadow
-          .card-body
-            .text-center.mb-4
-              img(src="https://cdn-icons-png.flaticon.com/512/2750/2750681.png" alt="Logo" width="80")
-              h2.text-primary.mt-2 Registro de Paciente
+  .container.mt-5.mb-5
+  .card.shadow
+    .card-body.p-4
+      .text-center.mb-4
+        img(src="https://cdn-icons-png.flaticon.com/512/2750/2750681.png" alt="Logo" width="60")
+        h3.text-primary.mt-2 Registro de Paciente
 
-            form(action="/admision" method="POST")
-              .form-check.mb-3
-                input.form-check-input(type="checkbox" id="guardia" name="guardia")
-                label.form-check-label(for="guardia") Derivado por Guardia
+      form(action="/registrar" method="POST")
+        .form-check.form-switch.mb-3
+          input.form-check-input(type="checkbox" name="derivado")
+          label.form-check-label.fw-semibold.text-muted.small(for="derivado")  Derivado por Guardia
 
-              .input-group.mb-3
-                input.form-control(type="text" name="dni" placeholder="Ej: 43123456" required)
-                button.btn.btn-outline-primary(type="button") Buscar
+        .row.g-3
+          .col-md-10
+            input.form-control.rounded-2.shadow-sm(type="text" name="dni" placeholder="Ej: 43123456" required)
+          .col-md-2
+            button.btn.btn-outline-primary.w-100(type="submit") Buscar
 
-              .row.mb-3
-                .col
-                  label.form-label Nombre Completo
-                  input.form-control(type="text" name="nombre" placeholder="Ej: sancho poncho" required)
-                .col
-                  label.form-label Dirección
-                  input.form-control(type="text" name="direccion" placeholder="Ej: avenida siempre viva" required)
+        .row.g-3.mt-1
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Nombre Completo
+            input.form-control(type="text" name="nombre" placeholder="Ej: Sancho Poncho" required)
 
-              .row.mb-3
-                .col
-                  label.form-label Teléfono
-                  input.form-control(type="text" name="telefono" placeholder="Ej: 2664101020")
-                .col
-                  label.form-label Contacto de Emergencia
-                  input.form-control(type="text" name="emergencia" placeholder="Ej: 2664525287")
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Dirección
+            input.form-control(type="text" name="direccion" placeholder="Ej: Avenida Siempre Viva")
 
-              .row.mb-3
-                .col
-                  label.form-label Fecha de Nacimiento
-                  input.form-control(type="date" name="nacimiento" required)
-                .col
-                  label.form-label Localidad
-                  input.form-control(type="text" name="localidad" placeholder="Ej: San Luis")
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Teléfono
+            input.form-control(type="tel" name="telefono" placeholder="Ej: 2664101020")
 
-              .row.mb-3
-                .col
-                  label.form-label Obra Social
-                  input.form-control(type="text" name="obra_social" placeholder="Ej: PAMI")
-                .col
-                  label.form-label Sexo
-                  select.form-select(name="sexo" required)
-                    option(value="" selected disabled) Seleccionar
-                    option(value="M") Masculino
-                    option(value="F") Femenino
-                    option(value="X") No binario / Otro
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Contacto de Emergencia
+            input.form-control(type="tel" name="contacto" placeholder="Ej: 2664525287")
 
-              button.btn.btn-primary.w-100(type="submit") Registrar Paciente
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Fecha de Nacimiento
+            input.form-control(type="date" name="fecha_nac" required)
+
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Localidad
+            input.form-control(type="text" name="localidad" placeholder="Ej: San Luis")
+
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Obra Social
+            input.form-control(type="text" name="obra_social" placeholder="Ej: PAMI")
+
+          .col-md-6
+            label.form-label.fw-semibold.text-muted.small Sexo
+            select.form-select(name="sexo" required)
+              option(disabled selected) Seleccionar
+              option(value="masculino") Masculino
+              option(value="femenino") Femenino
+              option(value="otro") Otro
+
+        .text-center.mt-4
+          button.btn.btn-primary.px-5.py-2.rounded-3(type="submit") Registrar Paciente
