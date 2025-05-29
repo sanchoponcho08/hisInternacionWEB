@@ -19,6 +19,17 @@ app.post("/admision", (req, res) => {
   console.log(req.body);
   res.send("Admisión registrada (simulado)");
 });
+app.get("/pacientes", (req, res) => {
+  res.render("pacientes"); // luego será dinámico
+});
+
+app.get("/internacion", (req, res) => {
+  res.render("internacion");
+});
+
+app.use((req, res) => {
+  res.status(404).render("error");
+});
 app.listen(3000, () => {
   console.log("Servidor corriendo en http://localhost:3000");
 });

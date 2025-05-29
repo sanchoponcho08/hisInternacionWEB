@@ -1,31 +1,58 @@
 extends layout
 
 block content
-  h2 Registro de Admisión de Paciente
+  .container
+    .row.justify-content-center
+      .col-md-8
+        .card.shadow
+          .card-body
+            .text-center.mb-4
+              img(src="https://cdn-icons-png.flaticon.com/512/2750/2750681.png" alt="Logo" width="80")
+              h2.text-primary.mt-2 Registro de Paciente
 
-  form(action="/admision" method="POST")
-    .mb-3
-      label.form-label(for="nombre") Nombre completo
-      input.form-control(type="text" id="nombre" name="nombre" required)
+            form(action="/admision" method="POST")
+              .form-check.mb-3
+                input.form-check-input(type="checkbox" id="guardia" name="guardia")
+                label.form-check-label(for="guardia") Derivado por Guardia
 
-    .mb-3
-      label.form-label(for="dni") DNI
-      input.form-control(type="number" id="dni" name="dni" required)
+              .input-group.mb-3
+                input.form-control(type="text" name="dni" placeholder="Ej: 43123456" required)
+                button.btn.btn-outline-primary(type="button") Buscar
 
-    .mb-3
-      label.form-label(for="sexo") Sexo
-      select.form-select(id="sexo" name="sexo" required)
-        option(value="" disabled selected) Seleccione...
-        option(value="M") Masculino
-        option(value="F") Femenino
+              .row.mb-3
+                .col
+                  label.form-label Nombre Completo
+                  input.form-control(type="text" name="nombre" placeholder="Ej: sancho poncho" required)
+                .col
+                  label.form-label Dirección
+                  input.form-control(type="text" name="direccion" placeholder="Ej: avenida siempre viva" required)
 
-    .mb-3
-      label.form-label(for="motivo") Motivo de internación
-      textarea.form-control(id="motivo" name="motivo" rows="3" required)
+              .row.mb-3
+                .col
+                  label.form-label Teléfono
+                  input.form-control(type="text" name="telefono" placeholder="Ej: 2664101020")
+                .col
+                  label.form-label Contacto de Emergencia
+                  input.form-control(type="text" name="emergencia" placeholder="Ej: 2664525287")
 
-    .mb-3
-      label.form-label(for="fechaIngreso") Fecha de ingreso
-      input.form-control(type="date" id="fechaIngreso" name="fechaIngreso" required)
+              .row.mb-3
+                .col
+                  label.form-label Fecha de Nacimiento
+                  input.form-control(type="date" name="nacimiento" required)
+                .col
+                  label.form-label Localidad
+                  input.form-control(type="text" name="localidad" placeholder="Ej: San Luis")
 
-    button.btn.btn-primary(type="submit") Registrar admisión
-    a.btn.btn-secondary(href="/") Cancelar
+              .row.mb-3
+                .col
+                  label.form-label Obra Social
+                  input.form-control(type="text" name="obra_social" placeholder="Ej: PAMI")
+                .col
+                  label.form-label Sexo
+                  select.form-select(name="sexo" required)
+                    option(value="" selected disabled) Seleccionar
+                    option(value="M") Masculino
+                    option(value="F") Femenino
+                    option(value="X") No binario / Otro
+
+              button.btn.btn-primary.w-100(type="submit") Registrar Paciente
