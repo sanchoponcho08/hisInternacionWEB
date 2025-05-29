@@ -1,0 +1,42 @@
+extends layout
+
+block content
+  h2.text-center.mb-4 Ficha de Internación del Paciente
+
+  .card.shadow.mb-4
+    .card-body
+      h5.text-primary Datos del Paciente
+      dl.row
+        dt.col-sm-3 Nombre completo
+        dd.col-sm-9 Juan Pérez
+
+        dt.col-sm-3 DNI
+        dd.col-sm-9 30123456
+
+        dt.col-sm-3 Sexo
+        dd.col-sm-9 Masculino
+
+        dt.col-sm-3 Fecha de nacimiento
+        dd.col-sm-9 1990-01-01
+
+  .card.shadow.mb-4
+    .card-body
+      h5.text-primary Detalles de la Internación
+      dl.row
+        dt.col-sm-3 Fecha de ingreso
+        dd.col-sm-9 2025-06-01
+
+        dt.col-sm-3 Derivado por guardia
+        dd.col-sm-9 Sí
+
+        dt.col-sm-3 Ala / Habitación / Cama
+        dd.col-sm-9 Norte / 202 / Cama 1
+
+        dt.col-sm-3 Motivo de internación
+        dd.col-sm-9 Dolor abdominal agudo
+
+  .card.shadow
+    .card-body
+      h5.text-primary Evaluación de Enfermería
+      p Se tomó temperatura, presión y frecuencia. Se informó malestar leve y náuseas.
+      button.btn.btn-outline-primary.mt-2(type="button") Ver evolución médica
