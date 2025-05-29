@@ -2,35 +2,42 @@ extends layout
 
 block content
   .row
-    .col-md-2.bg-primary.text-white.p-3.rounded-start
-      h5 Filtros
-      ul.nav.flex-column
-        li.nav-item.mb-2
-          a.btn.btn-light.w-100(href="#") Todas las camas
-        li.nav-item.mb-2
-          a.btn.btn-light.w-100(href="#") Camas Libres
-        li.nav-item.mb-2
-          a.btn.btn-light.w-100(href="#") Camas Ocupadas
-        li.nav-item
-          a.btn.btn-light.w-100(href="#") Camas Higienizando
-
-    
+  
+    .col-md-2.bg-dark.text-white.p-3(style="min-height: 100vh; border-radius: 12px 0 0 12px;")
+      h5.text-white.mb-4 Estado de camas
+      ul.nav.flex-column.gap-3
+        li
+          a.btn.btn-primary.w-100.rounded-pill.d-flex.align-items-center.justify-content-center(href="#")
+            i.fas.fa-bed.me-2
+            | Todas las camas
+        li
+          a.btn.btn-info.w-100.rounded-pill.text-dark.d-flex.align-items-center.justify-content-center(href="#")
+            i.fas.fa-check-circle.me-2
+            | Camas Libres
+        li
+          a.btn.btn-danger.w-100.rounded-pill.d-flex.align-items-center.justify-content-center(href="#")
+            i.fas.fa-user-injured.me-2
+            | Camas Ocupadas
+        li
+          a.btn.btn-warning.w-100.rounded-pill.text-dark.d-flex.align-items-center.justify-content-center(href="#")
+            i.fas.fa-broom.me-2
+            | Camas Higienizando
+   
     .col-md-10
-      h3.text-center.mb-4 Estado de Camas
+      h3.text-center.mb-5 Estado de Camas
 
-      .row
+      .row.g-4
         each ala in [1, 2, 3]
-          .col-md-4.mb-4
-            .card.shadow
-              .card-header.bg-primary.text-white.text-center Ala #{ala}
+          .col-md-4
+            .card.shadow-sm.border-0
+              .card-header.bg-primary.text-white.text-center.fw-semibold.rounded-top Ala #{ala}
               .card-body
-                each habitacion in ['A', 'B', 'C']
-                  .mb-3
-                    h6.text-center Habitación #{habitacion}
+                each habitacion, i in ['A', 'B', 'C']
+                  .mb-4
+                    h6.text-center.text-muted Habitación #{habitacion}
                     .d-flex.justify-content-center.gap-3.flex-wrap
                       each cama in [1, 2]
                         .text-center
-                          .bg-light.p-3.rounded.shadow-sm(style="width: 60px;")
-                            img(src="/img/hospital-bed.png"
-                            width="30")
-                            div.mt-1 #{cama}
+                          .bg-light.p-3.rounded.shadow-sm(style="width: 70px;")
+                            img(src="/img/hospital-bed.png" width="35")
+                            span.badge.bg-secondary.mt-2 #{cama}
