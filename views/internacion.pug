@@ -40,3 +40,22 @@ block content
       h5.text-primary Evaluación de Enfermería
       p Se tomó temperatura, presión y frecuencia. Se informó malestar leve y náuseas.
       button.btn.btn-outline-primary.mt-2(type="button") Ver evolución médica
+    
+  .card.shadow.mt-4.mb-5
+     .card-body
+      h5.text-primary Alta Médica
+      form(action="/alta" method="POST")
+        .row.mb-3
+            .col-md-6
+                label.form-label.text-muted.small Fecha de Alta
+                input.form-control.bg-body-tertiary.border-0.rounded-2.px-3.py-2(type="date" name="fecha_alta" required)
+
+            .col-md-6
+                label.form-label.text-muted.small Motivo de Alta
+                textarea.form-control.bg-body-tertiary.border-0.rounded-2.px-3.py-2(style="resize: none")(name="motivo" rows="1" required)
+
+      input(type="hidden" name="pacienteId" value="123") 
+
+      .row
+        .col-md-12
+           button.btn.btn-success.mt-2.px-4.py-2.rounded-3(type="submit") Confirmar Alta
