@@ -1,5 +1,5 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("./conexion");
+const sequelize = require("../modelo/conexion");
 
 class Medico extends Model {}
 
@@ -32,6 +32,7 @@ Medico.init(
     sequelize,
     modelName: "Medico",
     tableName: "medicos",
+    timestamps: false,
   }
 );
 
