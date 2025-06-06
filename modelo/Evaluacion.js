@@ -1,30 +1,41 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("../modelo/conexion");
+const sequelize = require("./conexion");
 
-class Usuario extends Model {}
+class Evaluacion extends Model {}
 
-Usuario.init(
+Evaluacion.init(
   {
-    nombre_usuario: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    contrasena: {
-      type: DataTypes.STRING,
+    fecha: {
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    rol: {
-      type: DataTypes.STRING,
+    tipo: {
+      type: DataTypes.ENUM("médica", "enfermería"),
       allowNull: false,
+    },
+    observaciones: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    paciente_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    medico_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    enfermero_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
   },
   {
     sequelize,
-    modelName: "Usuario",
-    tableName: "usuarios",
+    modelName: "Evaluacion",
+    tableName: "evaluaciones",
     timestamps: false,
   }
 );
 
-module.exports = Usuario;
+module.exports = Evaluacion;
