@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const sequelize = require("./models/conexion");
+const sequelize = require("./modelo/conexion");
 const path = require("path");
 
 app.set("view engine", "pug");
