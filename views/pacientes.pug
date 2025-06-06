@@ -1,21 +1,68 @@
 extends layout
 
 block content
-  h2 Pacientes Registrados
+  .container.mt-4
+    h2.text-center.mb-4 Registrar nuevo paciente
 
-  table.table.table-hover
-    thead.table-dark
-      tr
-        th DNI
-        th Nombre
-        th Fecha Nac.
-        th Sexo
-        th Obra Social
-    tbody
-     
-      tr
-        td 30123456
-        td Juan Pérez
-        td 1990-01-01
-        td M
-        td PAMI
+    form(action="/pacientes/registrar" method="POST").mb-5
+      .row.g-3
+        .col-md-6
+          label.form-label Nombre completo
+          input.form-control(type="text" name="nombre_completo" required)
+
+        .col-md-6
+          label.form-label DNI
+          input.form-control(type="number" name="dni" required)
+
+        .col-md-6
+          label.form-label Sexo
+          select.form-select(name="sexo" required)
+            option(value="Masculino") Masculino
+            option(value="Femenino") Femenino
+
+        .col-md-6
+          label.form-label Fecha de nacimiento
+          input.form-control(type="date" name="fecha_nacimiento" required)
+
+        .col-md-6
+          label.form-label Dirección
+          input.form-control(type="text" name="direccion")
+
+        .col-md-6
+          label.form-label Teléfono
+          input.form-control(type="text" name="telefono")
+
+        .col-md-6
+          label.form-label Contacto de Emergencia
+          input.form-control(type="text" name="contacto_emergencia")
+
+        .col-md-6
+          label.form-label Obra Social
+          input.form-control(type="text" name="obra_social")
+
+        .col-md-6
+          label.form-label Localidad
+          input.form-control(type="text" name="localidad")
+
+      .text-center
+        button.btn.btn-primary.mt-3(type="submit") Registrar Paciente
+
+    hr
+
+    h3.text-center.mt-5 Pacientes Registrados
+    table.table.table-bordered.table-hover.mt-3
+      thead.table-dark
+        tr
+          th DNI
+          th Nombre
+          th Fecha Nac.
+          th Sexo
+          th Obra Social
+      tbody
+        each paciente in pacientes
+          tr
+            td= paciente.dni
+            td= paciente.nombre_completo
+            td= paciente.fecha_nacimiento
+            td= paciente.sexo
+            td= paciente.obra_social
