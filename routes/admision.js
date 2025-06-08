@@ -3,15 +3,14 @@ const router = express.Router();
 const Admision = require("../modelo/Admision");
 const Paciente = require("../modelo/Paciente");
 
-router.get("/", async (req, res) => {
+router.get("/buscar", async (req, res) => {
+  const { dni } = req.query;
   try {
-    const pacientes = await Paciente.findAll({
-      order: [["nombre_completo", "ASC"]],
-    });
-    res.render("admision", { pacientes });
+    const paciente = await Paciente.findOne({ where: { dni } });
+    res.json(paciente || {});
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error al cargar formulario de admision");
+    console.error("Error buscando paciente:", error);
+    res.status(500).json({});
   }
 });
 
