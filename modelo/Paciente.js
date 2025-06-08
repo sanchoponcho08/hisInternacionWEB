@@ -46,4 +46,12 @@ Paciente.init(
   }
 );
 
+const Admision = require("./Admision");
+Paciente.hasMany(Admision, {
+  foreignKey: "pacienteId",
+  as: "admisiones",
+});
+Admision.belongsTo(Paciente, {
+  foreignKey: "pacienteId",
+});
 module.exports = Paciente;

@@ -6,55 +6,29 @@ block content
     .card-body.p-4
       .text-center.mb-4
         img(src="/img/sistemhisimg.png" alt="Logo" width="100")
-        h3.text-primary.mt-2 Registro de Paciente
+        h3.text-primary.mt-2 Registrar Admision
 
-      form(action="/registrar" method="POST")
-        .form-check.form-switch.mb-3
-          input.form-check-input(type="checkbox" name="derivado")
-          label.form-check-label.fw-semibold.text-muted.small(for="derivado")  Derivado por Guardia
+      form(action="/admision" method="POST")
+          .row.g-3
+            .col-md-6
+              label.form-label Paciente
+              select.form-select(name="pacienteId" required)
+                option(value="" disabled selected) Seleccionar paciente
+                each paciente in pacientes
+                  option(value=paciente.id)= `${paciente.dni} - ${paciente.nombre_completo}`
 
-        .row.g-3
-          .col-md-10
-            input.form-control.rounded-2.shadow-sm(type="text" name="dni" placeholder="Ej: 43123456" required)
-          .col-md-2
-            button.btn.btn-outline-primary.w-100(type="submit") Buscar
+            .col-md-6
+              label.form-label Fecha de ingreso
+              input.form-control(type="date" name="fecha_ingreso" required)
 
-        .row.g-3.mt-1
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Nombre Completo
-            input.form-control(type="text" name="nombre" placeholder="Ej: Sancho Poncho" required)
+            .col-md-12
+              label.form-label Motivo de admisión
+              input.form-control(type="text" name="motivo" placeholder="Ej: Neumonía" required)
 
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Dirección
-            input.form-control(type="text" name="direccion" placeholder="Ej: Avenida Siempre Viva")
+            .col-md-12
+              .form-check.form-switch
+                input.form-check-input(type="checkbox" name="derivado_guardia")
+                label.form-check-label(for="derivado_guardia") Derivado por Guardia
 
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Teléfono
-            input.form-control(type="tel" name="telefono" placeholder="Ej: 2664101020")
-
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Contacto de Emergencia
-            input.form-control(type="tel" name="contacto" placeholder="Ej: 2664525287")
-
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Fecha de Nacimiento
-            input.form-control(type="date" name="fecha_nac" required)
-
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Localidad
-            input.form-control(type="text" name="localidad" placeholder="Ej: San Luis")
-
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Obra Social
-            input.form-control(type="text" name="obra_social" placeholder="Ej: PAMI")
-
-          .col-md-6
-            label.form-label.fw-semibold.text-muted.small Sexo
-            select.form-select(name="sexo" required)
-              option(disabled selected) Seleccionar
-              option(value="masculino") Masculino
-              option(value="femenino") Femenino
-              option(value="otro") Otro
-
-        .text-center.mt-4
-          button.btn.btn-primary.px-5.py-2.rounded-3(type="submit") Registrar Paciente
+          .text-center.mt-4
+            button.btn.btn-primary(type="submit") Registrar Admisión
