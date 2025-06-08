@@ -1,8 +1,9 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 const sequelize = require("./conexion");
 
-const Paciente = sequelize.define(
-  "Paciente",
+class Paciente extends Model {}
+
+Paciente.init(
   {
     nombre_completo: {
       type: DataTypes.STRING,
@@ -38,6 +39,8 @@ const Paciente = sequelize.define(
     },
   },
   {
+    sequelize,
+    modelName: "Paciente",
     tableName: "pacientes",
     timestamps: false,
   }
