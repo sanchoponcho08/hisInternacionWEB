@@ -22,7 +22,9 @@ const internacionRoutes = require("./routes/internacion");
 app.use("/internacion", internacionRoutes);
 const camasRoutes = require("./routes/camas");
 app.use("/camas", camasRoutes);
-
+app.get("/", (req, res) => {
+  res.render("index");
+});
 sequelize
   .sync()
   .then(() => {
