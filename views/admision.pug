@@ -22,6 +22,12 @@ block content
           .mb-3
             label.form-label Motivo de admisión
             input.form-control(type="text", name="motivo", placeholder="Ej: Neumonía", required)
+          .mb-3
+            label.form-label Tipo de ingreso
+            select.form-select(name="tipo_ingreso", required)
+              option(value="Programado") Programado
+              option(value="Derivación") Derivación
+              option(value="Emergencia") Emergencia
 
           .form-check.form-switch.mb-3
             input.form-check-input(type="checkbox", name="derivado_guardia")
@@ -32,14 +38,23 @@ block content
     hr.my-5
 
     h4.text-center.mt-5.mb-3 Lista de Admisiones
-    .mb-3
-      input.form-control(type="text", id="filtroDNI", placeholder="Filtrar por DNI...")
+    .row.mb-3
+      .col-md-6
+        input.form-control(type="text", id="filtroDNI", placeholder="Filtrar por DNI...")
+      .col-md-6
+        select.form-select(id="filtroTipoIngreso")
+          option(value="") Filtrar por Tipo de Ingreso
+          option(value="Programado") Programado
+          option(value="Derivación") Derivación
+          option(value="Emergencia") Emergencia
+
 
     table.table.table-bordered.table-hover.mt-3
       thead.table-dark
         tr
           th Fecha Ingreso
           th Motivo
+          th Tipo de Ingreso
           th Derivado
           th DNI Paciente
           th Nombre Paciente
@@ -48,6 +63,7 @@ block content
           tr
             td= admision.fecha_ingreso
             td= admision.motivo
+            td= admision.tipo_ingreso
             td= admision.derivado_guardia ? "Sí" : "No"
             td= admision.Paciente && admision.Paciente.dni
             td= admision.Paciente && admision.Paciente.nombre_completo

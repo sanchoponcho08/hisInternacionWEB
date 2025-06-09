@@ -19,6 +19,11 @@ Admision.init(
       allowNull: false,
       defaultValue: false,
     },
+    tipo_ingreso: {
+      type: DataTypes.ENUM("Programado", "Derivación", "Emergencia"),
+      allowNull: false,
+      defaultValue: "Programado",
+    },
   },
   {
     sequelize,
