@@ -2,18 +2,20 @@ extends layout
 
 block content
   .container.mt-5.mb-5
-    .card.shadow
-      .card-body.p-4
-        .text-center.mb-4
-          img(src="/img/sistemhisimg.png" alt="Logo" width="100")
-          h3.text-primary.mt-2 Registrar Admision
+  .card.shadow
+    .card-body.p-4
+      .text-center.mb-4
+        img(src="/img/sistemhisimg.png" alt="Logo" width="100")
+        h3.text-primary.mt-2 Registrar Admision
 
-        form(action="/admision" method="POST")
+      form(action="/admision" method="POST")
           .row.g-3
             .col-md-6
               label.form-label Paciente
-              input.form-control(type="text", id="dniInput" placeholder="Escriba el DNI")
-              input(type="hidden", name="pacienteId", id="pacienteId")
+              select.form-select(name="pacienteId" required)
+                option(value="" disabled selected) Seleccionar paciente
+                each paciente in pacientes
+                  option(value=paciente.id)= `${paciente.dni} - ${paciente.nombre_completo}`
 
             .col-md-6
               label.form-label Fecha de ingreso
@@ -30,26 +32,3 @@ block content
 
           .text-center.mt-4
             button.btn.btn-primary(type="submit") Registrar Admisión
-
- 
-  script.
-    document.getElementById("dniInput").addEventListener("input", async function () {
-      const dni = this.value.trim();
-      if (dni.length >= 6) {
-        try {
-          const res = await fetch(`/admision/buscar?dni=${dni}`);
-          if (res.ok) {
-            const paciente = await res.json();
-            if (paciente && paciente.id) {
-              document.getElementById("pacienteId").value = paciente.id;
-              this.classList.remove("is-invalid");
-            } else {
-              document.getElementById("pacienteId").value = "";
-              this.classList.add("is-invalid");
-            }
-          }
-        } catch (error) {
-          console.error("Error buscando paciente", error);
-        }
-      }
-    });
