@@ -8,7 +8,12 @@ router.get("/", async (req, res) => {
     const pacientes = await Paciente.findAll({
       order: [["nombre_completo", "ASC"]],
     });
-    res.render("admision", { pacientes });
+    const admisiones = await Admision.findAll({
+      include: { model: Paciente },
+      order: [["fecha_ingreso", "DESC"]],
+    });
+
+    res.render("admision", { pacientes, admisiones });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al cargar formulario de admision");
