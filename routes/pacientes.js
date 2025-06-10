@@ -33,4 +33,15 @@ router.delete("/eliminar/:dni", async (req, res) => {
   }
 });
 
+router.put("/pacientes/editar/:dni", async (req, res) => {
+  try {
+    const { dni } = req.params;
+    const datos = req.body;
+    await Paciente.update(datos, { where: { dni } });
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 module.exports = router;
