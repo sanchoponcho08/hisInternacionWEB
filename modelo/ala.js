@@ -9,9 +9,6 @@ Ala.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    descripcion: {
-      type: DataTypes.STRING,
-    },
   },
   {
     sequelize,

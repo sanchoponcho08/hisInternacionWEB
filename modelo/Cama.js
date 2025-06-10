@@ -1,5 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../modelo/conexion");
+const Habitacion = require("./habitacion");
 
 class Cama extends Model {}
 
@@ -15,8 +16,9 @@ Cama.init(
       allowNull: false,
     },
     estado: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("libre", "ocupada", "higienizando"),
       allowNull: false,
+      defaultValue: "libre",
     },
     habitacion_id: {
       type: DataTypes.INTEGER,

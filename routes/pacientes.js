@@ -22,4 +22,15 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/editar/:dni", async (req, res) => {});
+
+router.delete("/eliminar/:dni", async (req, res) => {
+  try {
+    await Paciente.destroy({ where: { dni: req.params.dni } });
+    res.sendStatus(200);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
