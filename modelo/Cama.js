@@ -2,31 +2,41 @@ const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../modelo/conexion");
 const Habitacion = require("./habitacion");
 
-class Cama extends Model {}
-
+class Cama extends Model {
+  /**
+    Falta  filtrar por el sexo del otro paciente
+   */
+  static async findAvailable() {
+    const camas = await Cama.findAll({
+      where: {
+        estado: "libre",
+        higienizada: true,
+      },
+      include: {
+        model: Habitacion,
+        required: true,
+      },
+    });
+    return camas;
+  }
+}
 Cama.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     numero: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
+      comment: "Número de la cama dentro de la habitación (ej: 1, 2)",
     },
     estado: {
-      type: DataTypes.ENUM("libre", "ocupada", "higienizando"),
+      type: DataTypes.ENUM("libre", "ocupada", "higienizando", "mantenimiento"),
       allowNull: false,
       defaultValue: "libre",
     },
-    habitacion_id: {
-      type: DataTypes.INTEGER,
+    higienizada: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      references: {
-        model: "habitaciones",
-        key: "id",
-      },
+      defaultValue: true,
+      comment: "Indica si la cama está limpia y lista para usar",
     },
   },
   {
@@ -36,5 +46,9 @@ Cama.init(
     timestamps: false,
   }
 );
+
+Cama.belongsTo(Habitacion, { foreignKey: "habitacion_id" });
+
+Habitacion.hasMany(Cama, { foreignKey: "habitacion_id" });
 
 module.exports = Cama;
