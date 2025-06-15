@@ -69,3 +69,26 @@ block content
             tr
               td(colspan="7").text-center No hay internaciones activas o pendientes.
 
+block scripts
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const tipoIngresoSelect = document.getElementById('tipo_ingreso');
+      const dniInput = document.getElementById('dni_paciente');
+
+      
+      function actualizarEstadoDNI() {
+        if (tipoIngresoSelect.value === 'Emergencia') {
+          dniInput.required = false;
+          dniInput.placeholder = 'Opcional para Emergencias';
+        } else {
+          dniInput.required = true;
+          dniInput.placeholder = 'Escriba el DNI del paciente';
+        }
+      }
+
+      
+      actualizarEstadoDNI();
+
+      
+      tipoIngresoSelect.addEventListener('change', actualizarEstadoDNI);
+    });

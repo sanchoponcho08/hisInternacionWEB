@@ -90,6 +90,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+//evaluacionEnfermeria
+
 router.post("/:id/evaluaciones", async (req, res) => {
   try {
     const internacionId = req.params.id;
@@ -106,6 +108,55 @@ router.post("/:id/evaluaciones", async (req, res) => {
   } catch (error) {
     console.error("Error al guardar la evaluación:", error);
     req.flash("error_msg", "Error al guardar la evaluación.");
+    res.redirect(`/internaciones/${req.params.id}`);
+  }
+});
+
+//alta medica
+
+router.post("/:id/alta", async (req, res) => {
+  try {
+    const internacionId = req.params.id;
+    const { fecha_alta, motivo_alta } = req.body;
+    await sequelize.transaction(async (t) => {
+      const internacion = await Internacion.findByPk(internacionId, {
+        transaction: t,
+      });
+      if (!internacion || !internacion.cama_id) {
+        throw new Error(
+          "La internación no es válida o no tiene una cama asignada."
+        );
+      }
+      await Internacion.update(
+        {
+          estado: "FINALIZADA",
+          fecha_alta: fecha_alta,
+        },
+        {
+          where: { id: internacionId },
+          transaction: t,
+        }
+      );
+      await Cama.update(
+        {
+          estado: "libre",
+          higienizada: false,
+        },
+        {
+          where: { id: internacion.cama_id },
+          transaction: t,
+        }
+      );
+    });
+
+    req.flash(
+      "success_msg",
+      "Paciente dado de alta correctamente. La cama ha sido liberada."
+    );
+    res.redirect("/admision");
+  } catch (error) {
+    console.error("Error al dar de alta al paciente:", error);
+    req.flash("error_msg", "Error al dar de alta al paciente.");
     res.redirect(`/internaciones/${req.params.id}`);
   }
 });
