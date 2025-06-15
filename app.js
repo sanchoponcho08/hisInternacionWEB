@@ -13,7 +13,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-//rutas
+//modelos
 const pacientesRoutes = require("./routes/pacientes");
 app.use("/pacientes", pacientesRoutes);
 const admisionRoutes = require("./routes/admision");
@@ -21,6 +21,24 @@ app.use("/admision", admisionRoutes);
 const internacionRoutes = require("./routes/internacion");
 app.use("/internacion", internacionRoutes);
 const camasRoutes = require("./routes/camas");
+
+//relaciones
+Paciente.hasMany(Internacion, { foreignKey: "paciente_id" });
+Internacion.belongsTo(Paciente, { foreignKey: "paciente_id" });
+
+Medico.hasMany(Internacion, { foreignKey: "medico_id" });
+Internacion.belongsTo(Medico, { foreignKey: "medico_id" });
+
+Cama.hasOne(Internacion, { foreignKey: "cama_id" });
+Internacion.belongsTo(Cama, { foreignKey: "cama_id" });
+
+Habitacion.hasMany(Cama, { foreignKey: "habitacion_id" });
+Cama.belongsTo(Habitacion, { foreignKey: "habitacion_id" });
+
+Ala.hasMany(Habitacion, { foreignKey: "ala_id" });
+Habitacion.belongsTo(Ala, { foreignKey: "ala_id" });
+
+//rutas
 app.use("/camas", camasRoutes);
 app.get("/", (req, res) => {
   res.render("index");

@@ -42,13 +42,4 @@ Internacion.init(
   }
 );
 
-Internacion.belongsTo(Paciente, { foreignKey: "paciente_id" });
-Paciente.hasMany(Internacion, { foreignKey: "paciente_id" });
-
-Internacion.belongsTo(Cama, { foreignKey: "cama_id" });
-Cama.hasOne(Internacion, { foreignKey: "cama_id" });
-
-Internacion.belongsTo(Medico, { foreignKey: "medico_id" });
-Medico.hasMany(Internacion, { foreignKey: "medico_id" });
-
 module.exports = Internacion;

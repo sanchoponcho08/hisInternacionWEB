@@ -47,8 +47,4 @@ Cama.init(
   }
 );
 
-Cama.belongsTo(Habitacion, { foreignKey: "habitacion_id" });
-
-Habitacion.hasMany(Cama, { foreignKey: "habitacion_id" });
-
 module.exports = Cama;
