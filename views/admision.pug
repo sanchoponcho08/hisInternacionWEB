@@ -2,110 +2,69 @@
 extends layout
 
 block content
-  .container.mt-5.mb-5
-    .card.shadow
-      .card-body.p-4
-        .text-center.mb-4
-          img(src="/img/sistemhisimg.png" alt="Logo" width="100")
-          h3.text-primary.mt-2 Registrar Admisión
-
-        form(action="/admision" method="POST")
+  .container.mt-4
+    h1.mb-4 Gestión de Admisiones
+    .card.mb-5
+      .card-header
+        h4 Registrar Nueva Admisión
+      .card-body
+        form(action="/admision", method="POST")
           .mb-3
-            label.form-label DNI del Paciente
-            input.form-control(type="text", id="dniInput", placeholder="Escriba el DNI", required)
-            input(type="hidden", name="pacienteId", id="pacienteId")
-
+            label.form-label(for="dni_paciente") DNI del Paciente
+            input.form-control#dni_paciente(type="text", name="dni_paciente", list="lista_pacientes", placeholder="Escriba el DNI del paciente", required)
+            datalist#lista_pacientes
+              each paciente in pacientes
+                option(value=paciente.dni) #{paciente.nombre_completo}
           .mb-3
-            label.form-label Fecha de ingreso
-            input.form-control(type="date", name="fecha_ingreso", required)
+            label.form-label(for="motivo") Motivo de la Admisión
+            textarea.form-control#motivo(name="motivo", rows="3", placeholder="Ej: Neumonía, control post-operatorio...", required)
+            
+          .row
+            .col-md-6.mb-3
+              label.form-label(for="tipo_ingreso") Tipo de Ingreso
+              select.form-select#tipo_ingreso(name="tipo_ingreso", required)
+                option(value="Programado" selected) Programado
+                option(value="Derivacion") Derivación
+                option(value="Emergencia") Emergencia
+            .col-md-6.d-flex.align-items-center
+              .form-check
+                input.form-check-input#derivado_guardia(type="checkbox", name="derivado_guardia")
+                label.form-check-label(for="derivado_guardia") Derivado de Guardia
 
-          .mb-3
-            label.form-label Motivo de admisión
-            input.form-control(type="text", name="motivo", placeholder="Ej: Neumonía", required)
-          .mb-3
-            label.form-label Tipo de ingreso
-            select.form-select(name="tipo_ingreso", required)
-              option(value="Programado") Programado
-              option(value="Derivación") Derivación
-              option(value="Emergencia") Emergencia
-
-          .form-check.form-switch.mb-3
-            input.form-check-input(type="checkbox", name="derivado_guardia")
-            label.form-check-label(for="derivado_guardia") Derivado por Guardia
-
-          .text-center.mt-4
-            button.btn.btn-primary(type="submit") Registrar Admisión
-    hr.my-5
-
-    h4.text-center.mt-5.mb-3 Lista de Admisiones
-    .row.mb-3
-      .col-md-6
-        input.form-control(type="text", id="filtroDNI", placeholder="Filtrar por DNI...")
-      .col-md-6
-        select.form-select(id="filtroTipoIngreso")
-          option(value="") Filtrar por Tipo de Ingreso
-          option(value="Programado") Programado
-          option(value="Derivación") Derivación
-          option(value="Emergencia") Emergencia
-
-
-    table.table.table-bordered.table-hover.mt-3
-      thead.table-dark
-        tr
-          th Fecha Ingreso
-          th Motivo
-          th Tipo de Ingreso
-          th Derivado
-          th DNI Paciente
-          th Nombre Paciente
-      tbody#tablaAdmisiones
-        each admision in admisiones
+          button.btn.btn-primary(type="submit") Iniciar Admisión
+    hr
+    h2.mt-4 Internaciones Activas y Pendientes
+    .table-responsive
+      table.table.table-striped.table-hover
+        thead
           tr
-            td= admision.fecha_ingreso
-            td= admision.motivo
-            td= admision.tipo_ingreso
-            td= admision.derivado_guardia ? "Sí" : "No"
-            td= admision.Paciente && admision.Paciente.dni
-            td= admision.Paciente && admision.Paciente.nombre_completo
+            th Fecha Ingreso
+            th Paciente
+            th DNI
+            th Motivo
+            th Estado
+            th Cama Asignada
+            th Acciones
+        tbody
+          if internaciones.length > 0
+            each internacion in internaciones
+              tr
+                td= new Date(internacion.fecha_ingreso).toLocaleDateString('es-AR')
+                td= internacion.Paciente.nombre_completo
+                td= internacion.Paciente.dni
+                td= internacion.motivo
+                td
+                  span.badge(class=(internacion.estado === 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-success'))= internacion.estado
+                td
+                  if internacion.Cama
+                    span= `Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}`
+                  else
+                    span.text-muted Sin Asignar
+                td
+                  // El botón para asignar cama solo aparece si el estado es PENDIENTE
+                  if internacion.estado === 'PENDIENTE'
+                    a.btn.btn-sm.btn-info(href=`/internaciones/${internacion.id}/asignar-cama`) Asignar Cama
+          else
+            tr
+              td(colspan="7").text-center No hay internaciones activas o pendientes.
 
-block scripts
-  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
-  script.
-    document.addEventListener("DOMContentLoaded", function () {
-      const dniInput = document.getElementById("dniInput");
-      const pacienteIdInput = document.getElementById("pacienteId");
-
-      if (dniInput) {
-        dniInput.addEventListener("input", async function () {
-          const dni = this.value.trim();
-          if (dni.length >= 6) {
-            try {
-              const res = await fetch(`/admision/buscar?dni=${dni}`);
-              const paciente = await res.json();
-              if (paciente && paciente.id) {
-                pacienteIdInput.value = paciente.id;
-                this.classList.remove("is-invalid");
-              } else {
-                pacienteIdInput.value = "";
-                this.classList.add("is-invalid");
-              }
-            } catch (err) {
-              console.error("Error en búsqueda AJAX", err);
-            }
-          }
-        });
-      }
-      const filtroInput = document.getElementById("filtroDNI");
-      if (filtroInput) {
-        filtroInput.addEventListener("input", function () {
-          const filtro = this.value.trim().toLowerCase();
-          const filas = document.querySelectorAll("#tablaAdmisiones tr");
-
-          filas.forEach(fila => {
-            const celdaDNI = fila.children[3];
-            const valorDNI = celdaDNI?.textContent.toLowerCase();
-            fila.style.display = valorDNI.includes(filtro) ? "" : "none";
-          });
-        });
-      }
-    });

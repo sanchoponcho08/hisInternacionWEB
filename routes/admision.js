@@ -8,7 +8,13 @@ const Internacion = require("../modelo/Internacion");
 router.get("/", async (req, res) => {
   try {
     const internaciones = await Internacion.findAll({
-      include: { model: Paciente },
+      include: [
+        { model: Paciente },
+        {
+          model: Cama,
+          include: [Habitacion],
+        },
+      ],
       order: [["fecha_ingreso", "DESC"]],
       // where: { estado: ['PENDIENTE', 'ACTIVA'] } filtrar solo activas
     });
@@ -51,19 +57,17 @@ router.post("/", async (req, res) => {
 router.get("/internaciones/:id/asignar-cama", async (req, res) => {
   try {
     const internacion = await Internacion.findByPk(req.params.id, {
-      include: Paciente, // Incluimos al paciente para mostrar sus datos
+      include: Paciente,
     });
 
     if (!internacion) {
       return res.status(404).send("Internación no encontrada");
     }
 
-    // Usamos el método estático del modelo Cama que creamos
     const camasDisponibles = await Cama.findAvailable(
       internacion.Paciente.sexo
     );
 
-    // Renderizamos la nueva vista para la asignación
     res.render("admision/asignar_cama", {
       internacion: internacion,
       camas: camasDisponibles,

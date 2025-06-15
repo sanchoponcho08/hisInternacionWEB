@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  .container.mt-4
+    .row.justify-content-center
+      .col-md-8
+        .card
+          .card-header
+            h2 Asignar Cama a Paciente
+          .card-body
+            h4.mb-3 Datos del Paciente
+            p #[strong Nombre:] #{internacion.Paciente.nombre_completo}
+            p #[strong DNI:] #{internacion.Paciente.dni}
+            p #[strong Motivo de Ingreso:] #{internacion.motivo}
+            
+            hr
+
+            form(action=`/internaciones/${internacion.id}/asignar-cama`, method="POST")
+              .mb-3
+                label.form-label(for="cama_id") #[strong Seleccione una Cama Disponible]
+                if camas.length > 0
+                  select.form-select.form-select-lg#cama_id(name="cama_id", required)
+                    option(value="" disabled selected) -- Hay #{camas.length} camas disponibles --
+                    each cama in camas
+                      option(value=cama.id) Habitación: #{cama.Habitacion.numero} - Cama: #{cama.numero}
+                else
+                  .alert.alert-warning No hay camas disponibles que cumplan los criterios.
+
+              if camas.length > 0
+                button.btn.btn-success.btn-lg(type="submit") Confirmar Asignación e Internar
+              else
+                a.btn.btn-secondary(href="/admision") Volver a Admisiones
