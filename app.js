@@ -8,19 +8,22 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set("view engine", "pug");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
-//modelos
+//rutas
 const pacientesRoutes = require("./routes/pacientes");
 app.use("/pacientes", pacientesRoutes);
 const admisionRoutes = require("./routes/admision");
 app.use("/admision", admisionRoutes);
 const internacionRoutes = require("./routes/internacion");
-app.use("/internacion", internacionRoutes);
+app.use("/internaciones", internacionRoutes);
 const camasRoutes = require("./routes/camas");
+
+//modelos
+const Paciente = require("./modelo/Paciente");
+const Internacion = require("./modelo/Internacion");
+const Cama = require("./modelo/Cama");
+const Habitacion = require("./modelo/Habitacion");
+const Ala = require("./modelo/ala");
+const Medico = require("./modelo/Medico");
 
 //relaciones
 Paciente.hasMany(Internacion, { foreignKey: "paciente_id" });

@@ -28,7 +28,4 @@ Medico.init(
   }
 );
 
-Medico.hasMany(Internacion, { foreignKey: "medico_id" });
-Internacion.belongsTo(Medico, { foreignKey: "medico_id" });
-
 module.exports = Medico;
