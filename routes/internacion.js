@@ -6,6 +6,8 @@ const Paciente = require("../modelo/Paciente");
 const Cama = require("../modelo/Cama");
 const Habitacion = require("../modelo/Habitacion");
 const Ala = require("../modelo/ala");
+const E = require("../modelo/ala");
+const EvaluacionEnfermeria = require("../modelo/EvaluacionEnfermeria");
 
 router.get("/:id/asignar-cama", async (req, res) => {
   try {
@@ -62,4 +64,49 @@ router.post("/:id/asignar-cama", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const internacion = await Internacion.findByPk(req.params.id, {
+      include: [
+        { model: Paciente },
+        {
+          model: Cama,
+          include: {
+            model: Habitacion,
+            include: { model: Ala },
+          },
+        },
+        { model: EvaluacionEnfermeria, order: [["fecha_hora", "DESC"]] },
+      ],
+    });
+
+    if (!internacion) {
+      return res.status(404).send("Internación no encontrada");
+    }
+    res.render("internacion/detalle", { internacion });
+  } catch (error) {
+    console.error("Error al obtener el detalle de la internación:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
+
+router.post("/:id/evaluaciones", async (req, res) => {
+  try {
+    const internacionId = req.params.id;
+    await EvaluacionEnfermeria.create({
+      ...req.body,
+      internacion_id: internacionId,
+    });
+    req.flash(
+      "success_msg",
+      "Evaluación de enfermería registrada correctamente."
+    );
+
+    res.redirect(`/internaciones/${internacionId}`);
+  } catch (error) {
+    console.error("Error al guardar la evaluación:", error);
+    req.flash("error_msg", "Error al guardar la evaluación.");
+    res.redirect(`/internaciones/${req.params.id}`);
+  }
+});
 module.exports = router;

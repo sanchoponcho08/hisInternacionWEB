@@ -1,28 +1,94 @@
-extends ../../layout
+extends ../layout
 
 block content
-  .container.mt-4
+  .container.py-4
     if internacion
-      h1 Ficha de Internación
-      
-      .card.mb-4
-        .card-header Datos del Paciente
-        .card-body
-          p #[strong Nombre:] #{internacion.Paciente.nombre_completo}
-          p #[strong DNI:] #{internacion.Paciente.dni}
-          p #[strong Fecha de Nacimiento:] #{new Date(internacion.Paciente.fecha_nacimiento).toLocaleDateString('es-AR')}
-          p #[strong Sexo:] #{internacion.Paciente.sexo}
+      h1.text-center.mb-4 Ficha de Internación
 
       .card.mb-4
-        .card-header Detalles de la Internación
+        .card-header.fw-bold Datos del Paciente
         .card-body
-          p #[strong Fecha de Ingreso:] #{new Date(internacion.fecha_ingreso).toLocaleString('es-AR')}
-          p #[strong Motivo:] #{internacion.motivo}
-          if internacion.Cama
-            p #[strong Ubicación:] #{internacion.Cama.Habitacion.Ala.nombre} - Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}
+          dl.row
+            dt.col-sm-3 Nombre
+            dd.col-sm-9 #{internacion.Paciente.nombre_completo}
+
+            dt.col-sm-3 DNI
+            dd.col-sm-9 #{internacion.Paciente.dni}
+
+            dt.col-sm-3 Fecha de Nacimiento
+            dd.col-sm-9 #{new Date(internacion.Paciente.fecha_nacimiento).toLocaleDateString('es-AR')}
+
+            dt.col-sm-3 Sexo
+            dd.col-sm-9 #{internacion.Paciente.sexo}
+
+      .card.mb-4
+        .card-header.fw-bold Detalles de la Internación
+        .card-body
+          dl.row
+            dt.col-sm-3 Fecha de Ingreso
+            dd.col-sm-9 #{new Date(internacion.fecha_ingreso).toLocaleString('es-AR')}
+
+            dt.col-sm-3 Motivo
+            dd.col-sm-9 #{internacion.motivo}
+
+            dt.col-sm-3 Ubicación
+            dd.col-sm-9
+              if internacion.Cama
+                | #{internacion.Cama.Habitacion.Ala.nombre} - Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}
+              else
+                span.text-warning Aún sin cama asignada.
+
+      .card.mb-4
+        .card-header.fw-bold Historial de Evaluaciones de Enfermería
+        .card-body
+          if internacion.EvaluacionEnfermeria && internacion.EvaluacionEnfermeria.length > 0
+            ul.list-group.list-group-flush
+              each evaluacion in internacion.EvaluacionEnfermeria
+                li.list-group-item
+                  .d-flex.w-100.justify-content-between
+                    h5.mb-1 Observaciones
+                    small.text-muted #{new Date(evaluacion.fecha_hora).toLocaleString('es-AR')}
+                  p.mb-1 #{evaluacion.observaciones}
+                  small.text-muted TA: #{evaluacion.presion_arterial || 'N/A'} | FC: #{evaluacion.frecuencia_cardiaca || 'N/A'} lpm | FR: #{evaluacion.frecuencia_respiratoria || 'N/A'} rpm | Temp: #{evaluacion.temperatura || 'N/A'}°C
           else
-            p.text-warning Aún sin cama asignada.
-    else
-      .alert.alert-danger Internación no encontrada.
+            p.text-muted No hay evaluaciones de enfermería registradas.
+
+      .card.mb-4
+        .card-header.fw-bold Registrar Nueva Evaluación de Enfermería
+        .card-body
+          form(action=`/internaciones/${internacion.id}/evaluaciones`, method="POST")
+            .row
+              .col-md-3.mb-3
+                label.form-label(for="presion_arterial") Presión Arterial
+                input.form-control#presion_arterial(type="text", name="presion_arterial", placeholder="Ej: 120/80")
+              .col-md-3.mb-3
+                label.form-label(for="frecuencia_cardiaca") Frec. Cardíaca (lpm)
+                input.form-control#frecuencia_cardiaca(type="number", name="frecuencia_cardiaca")
+              .col-md-3.mb-3
+                label.form-label(for="frecuencia_respiratoria") Frec. Resp. (rpm)
+                input.form-control#frecuencia_respiratoria(type="number", name="frecuencia_respiratoria")
+              .col-md-3.mb-3
+                label.form-label(for="temperatura") Temperatura (°C)
+                input.form-control#temperatura(type="number", step="0.1", name="temperatura")
+            
+            .mb-3
+              label.form-label(for="observaciones") Observaciones
+              textarea.form-control#observaciones(name="observaciones", rows="4", placeholder="Describa el estado general del paciente, novedades, etc.", required)
+
+            button.btn.btn-primary(type="submit") Guardar Evaluación
+
+      .card.mb-4
+        .card-header.fw-bold Alta Hospitalaria
+        .card-body
+          form(action=`/internaciones/${internacion.id}/alta`, method="POST")
+            .row
+              .col-md-4.mb-3
+                label.form-label(for="fecha_alta") Fecha de Alta
+                input.form-control#fecha_alta(type="date", name="fecha_alta", required)
+              .col-md-8.mb-3
+                label.form-label(for="motivo_alta") Motivo del Alta
+                input.form-control#motivo_alta(type="text", name="motivo_alta", placeholder="Ej: Mejoría clínica, alta voluntaria...", required)
+            button.btn.btn-success(type="submit") Confirmar Alta
+            
     else
       .alert.alert-danger Internación no encontrada.

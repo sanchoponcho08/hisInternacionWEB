@@ -43,6 +43,7 @@ const Cama = require("./modelo/Cama");
 const Habitacion = require("./modelo/Habitacion");
 const Ala = require("./modelo/ala");
 const Medico = require("./modelo/Medico");
+const EvaluacionEnfermeria = require("./modelo/EvaluacionEnfermeria");
 
 //relaciones
 Paciente.hasMany(Internacion, { foreignKey: "paciente_id" });
@@ -59,6 +60,9 @@ Cama.belongsTo(Habitacion, { foreignKey: "habitacion_id" });
 
 Ala.hasMany(Habitacion, { foreignKey: "ala_id" });
 Habitacion.belongsTo(Ala, { foreignKey: "ala_id" });
+
+Internacion.hasMany(EvaluacionEnfermeria, { foreignKey: "internacion_id" });
+EvaluacionEnfermeria.belongsTo(Internacion, { foreignKey: "internacion_id" });
 
 //rutas
 app.use("/camas", camasRoutes);
