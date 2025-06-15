@@ -57,7 +57,7 @@ block content
                   span.badge(class=(internacion.estado === 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-success'))= internacion.estado
                 td
                   if internacion.Cama
-                    span= `Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}`
+                    span Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}
                   else
                     span.text-muted Sin Asignar
                 td

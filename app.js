@@ -2,11 +2,29 @@ const express = require("express");
 const app = express();
 const sequelize = require("./modelo/conexion");
 const path = require("path");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  session({
+    secret: "mi_palabra_super_secreta", // Cambia esto, es importante para la seguridad
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(flash());
+
+// mensajes flash
+app.use(function (req, res, next) {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
+});
 
 //rutas
 const pacientesRoutes = require("./routes/pacientes");
@@ -16,6 +34,7 @@ app.use("/admision", admisionRoutes);
 const internacionRoutes = require("./routes/internacion");
 app.use("/internaciones", internacionRoutes);
 const camasRoutes = require("./routes/camas");
+app.use("/camas", camasRoutes);
 
 //modelos
 const Paciente = require("./modelo/Paciente");
