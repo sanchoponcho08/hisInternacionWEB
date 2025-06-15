@@ -1,0 +1,28 @@
+extends ../../layout
+
+block content
+  .container.mt-4
+    if internacion
+      h1 Ficha de Internación
+      
+      .card.mb-4
+        .card-header Datos del Paciente
+        .card-body
+          p #[strong Nombre:] #{internacion.Paciente.nombre_completo}
+          p #[strong DNI:] #{internacion.Paciente.dni}
+          p #[strong Fecha de Nacimiento:] #{new Date(internacion.Paciente.fecha_nacimiento).toLocaleDateString('es-AR')}
+          p #[strong Sexo:] #{internacion.Paciente.sexo}
+
+      .card.mb-4
+        .card-header Detalles de la Internación
+        .card-body
+          p #[strong Fecha de Ingreso:] #{new Date(internacion.fecha_ingreso).toLocaleString('es-AR')}
+          p #[strong Motivo:] #{internacion.motivo}
+          if internacion.Cama
+            p #[strong Ubicación:] #{internacion.Cama.Habitacion.Ala.nombre} - Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}
+          else
+            p.text-warning Aún sin cama asignada.
+    else
+      .alert.alert-danger Internación no encontrada.
+    else
+      .alert.alert-danger Internación no encontrada.

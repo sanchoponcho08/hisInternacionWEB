@@ -50,7 +50,8 @@ block content
             each internacion in internaciones
               tr
                 td= new Date(internacion.fecha_ingreso).toLocaleDateString('es-AR')
-                td= internacion.Paciente.nombre_completo
+                td 
+                  a(href=`/internaciones/${internacion.id}`)= internacion.Paciente.nombre_completo
                 td= internacion.Paciente.dni
                 td= internacion.motivo
                 td
