@@ -1,6 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../modelo/conexion");
-const Habitacion = require("./habitacion");
+const Habitacion = require("./Habitacion");
 
 class Cama extends Model {
   /**

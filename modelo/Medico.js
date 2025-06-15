@@ -1,11 +1,12 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../modelo/conexion");
+const Internacion = require("./Internacion");
 
 class Medico extends Model {}
 
 Medico.init(
   {
-    nombre_completo: {
+    nombre: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -18,15 +19,6 @@ Medico.init(
       allowNull: false,
       unique: true,
     },
-    telefono: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      unique: true,
-    },
   },
   {
     sequelize,
@@ -35,5 +27,8 @@ Medico.init(
     timestamps: false,
   }
 );
+
+Medico.hasMany(Internacion, { foreignKey: "medico_id" });
+Internacion.belongsTo(Medico, { foreignKey: "medico_id" });
 
 module.exports = Medico;

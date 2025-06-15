@@ -1,12 +1,13 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("./conexion");
+const Habitacion = require("./Habitacion");
 
 class Ala extends Model {}
 
 Ala.init(
   {
     nombre: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
   },
@@ -17,5 +18,7 @@ Ala.init(
     timestamps: false,
   }
 );
+Ala.hasMany(Habitacion, { foreignKey: "ala_id" });
+Habitacion.belongsTo(Ala, { foreignKey: "ala_id" });
 
 module.exports = Ala;

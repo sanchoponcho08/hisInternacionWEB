@@ -1,99 +1,105 @@
 const express = require("express");
 const router = express.Router();
-const Admision = require("../modelo/Admision");
+const sequelize = require("../modelo/conexion");
 const Paciente = require("../modelo/Paciente");
 const Cama = require("../modelo/Cama");
-const Habitacion = require("../modelo/habitacion");
-const Ala = require("../modelo/ala");
-
-Paciente.hasMany(Admision, { foreignKey: "pacienteId" });
-Admision.belongsTo(Paciente, { foreignKey: "pacienteId" });
-
-Cama.belongsTo(Habitacion, { foreignKey: "habitacion_id" });
-Habitacion.hasMany(Cama, { foreignKey: "habitacion_id" });
-Habitacion.belongsTo(Ala, { foreignKey: "ala_id" });
-Ala.hasMany(Habitacion, { foreignKey: "ala_id" });
+const Internacion = require("../modelo/Internacion");
 
 router.get("/", async (req, res) => {
   try {
+    const internaciones = await Internacion.findAll({
+      include: { model: Paciente },
+      order: [["fecha_ingreso", "DESC"]],
+      // where: { estado: ['PENDIENTE', 'ACTIVA'] } filtrar solo activas
+    });
     const pacientes = await Paciente.findAll({
       order: [["nombre_completo", "ASC"]],
     });
-    const admisiones = await Admision.findAll({
-      include: { model: Paciente },
-      order: [["fecha_ingreso", "DESC"]],
-    });
-
-    res.render("admision", { pacientes, admisiones });
+    res.render("admision", { internaciones, pacientes });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error al cargar formulario de admisión");
+    console.error("Error al cargar la página de admisión:", error);
+    res.status(500).send("Error al cargar la página de admisión");
   }
 });
 
 router.post("/", async (req, res) => {
   try {
-    const {
-      fecha_ingreso,
-      motivo,
-      derivado_guardia,
-      tipo_ingreso,
-      pacienteId,
-    } = req.body;
+    const { dni_paciente, motivo, tipo_ingreso, derivado_guardia } = req.body;
 
-    let paciente = await Paciente.findByPk(pacienteId);
+    const paciente = await Paciente.findOne({ where: { dni: dni_paciente } });
 
-    // Si es emergencia y no hay paciente seleccionado, crear uno vacío
-    let nuevoPaciente = null;
-    if (tipo_ingreso === "Emergencia" && !paciente) {
-      nuevoPaciente = await Paciente.create({
-        nombre_completo: "Paciente de emergencia",
-        dni: null,
-        sexo: null,
-        fecha_nacimiento: null,
-        direccion: null,
-        telefono: null,
-        contacto_emergencia: null,
-        obra_social: null,
-        localidad: null,
-      });
+    if (!paciente) {
+      return res.redirect("/pacientes/new");
     }
 
-    const admision = await Admision.create({
-      fecha_ingreso,
-      motivo,
+    const nuevaInternacion = await Internacion.create({
+      paciente_id: paciente.id,
+      fecha_ingreso: new Date(),
+      motivo: motivo,
+      tipo_ingreso: tipo_ingreso,
       derivado_guardia: derivado_guardia === "on",
-      tipo_ingreso,
-      pacienteId: nuevoPaciente ? nuevoPaciente.id : parseInt(pacienteId, 10),
+      estado: "PENDIENTE",
+      cama_id: null,
     });
 
-    // Si es emergencia, buscar cama en habitación del ala de emergencia
-    if (tipo_ingreso === "Emergencia") {
-      const camaDisponible = await Cama.findOne({
-        where: { estado: "libre" },
-        include: {
-          model: Habitacion,
-          include: {
-            model: Ala,
-            where: { nombre: "Emergencia" },
-          },
-        },
-      });
+    res.redirect(`/internaciones/${nuevaInternacion.id}/asignar-cama`);
+  } catch (err) {
+    console.error("Error al registrar la admisión:", err);
+    res.status(500).send("Error al registrar la admisión");
+  }
+});
+router.get("/internaciones/:id/asignar-cama", async (req, res) => {
+  try {
+    const internacion = await Internacion.findByPk(req.params.id, {
+      include: Paciente, // Incluimos al paciente para mostrar sus datos
+    });
 
-      if (camaDisponible) {
-        await camaDisponible.update({ estado: "ocupada" });
-        await Internacion.create({
-          fecha_ingreso,
-          camaId: camaDisponible.id,
-          admisionId: admision.id,
-        });
-      }
+    if (!internacion) {
+      return res.status(404).send("Internación no encontrada");
     }
 
+    // Usamos el método estático del modelo Cama que creamos
+    const camasDisponibles = await Cama.findAvailable(
+      internacion.Paciente.sexo
+    );
+
+    // Renderizamos la nueva vista para la asignación
+    res.render("admision/asignar_cama", {
+      internacion: internacion,
+      camas: camasDisponibles,
+    });
+  } catch (error) {
+    console.error("Error al mostrar la página de asignación:", error);
+    res.status(500).send("Error al mostrar la página de asignación");
+  }
+});
+
+router.post("/internaciones/:id/asignar-cama", async (req, res) => {
+  try {
+    const internacionId = req.params.id;
+    const camaId = req.body.cama_id;
+    await sequelize.transaction(async (t) => {
+      await Internacion.update(
+        {
+          cama_id: camaId,
+          estado: "ACTIVA",
+        },
+        { where: { id: internacionId }, transaction: t }
+      );
+
+      await Cama.update(
+        {
+          estado: "ocupada",
+        },
+        { where: { id: camaId }, transaction: t }
+      );
+    });
+
+    // mensaje confirmacion
     res.redirect("/admision");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al registrar la admisión");
+  } catch (error) {
+    console.error("Error al procesar la asignación de cama:", error);
+    res.status(500).send("Error al procesar la asignación de cama");
   }
 });
 

@@ -1,5 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("./conexion");
+const Internacion = require("./Internacion");
 
 class Paciente extends Model {}
 
@@ -46,12 +47,6 @@ Paciente.init(
   }
 );
 
-const Admision = require("./Admision");
-Paciente.hasMany(Admision, {
-  foreignKey: "pacienteId",
-  as: "admisiones",
-});
-Admision.belongsTo(Paciente, {
-  foreignKey: "pacienteId",
-});
+Paciente.hasMany(Internacion, { foreignKey: "paciente_id" });
+Internacion.belongsTo(Paciente, { foreignKey: "paciente_id" });
 module.exports = Paciente;
