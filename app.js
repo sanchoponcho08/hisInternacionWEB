@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const sequelize = require("./modelo/conexion");
@@ -12,7 +13,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
-    secret: "mi_palabra_super_secreta", // Cambia esto, es importante para la seguridad
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
@@ -64,17 +65,18 @@ Habitacion.belongsTo(Ala, { foreignKey: "ala_id" });
 Internacion.hasMany(EvaluacionEnfermeria, { foreignKey: "internacion_id" });
 EvaluacionEnfermeria.belongsTo(Internacion, { foreignKey: "internacion_id" });
 
-//rutas
-app.use("/camas", camasRoutes);
 app.get("/", (req, res) => {
   res.render("index");
 });
+
+const PORT = process.env.PORT || 3000;
+
 sequelize
   .sync()
   .then(() => {
     console.log("Base de datos sincronizada");
-    app.listen(3000, () => {
-      console.log("Servidor funcionando en http://localhost:3000");
+    app.listen(PORT, () => {
+      console.log("Servidor funcionando en http://localhost:${PORT}");
     });
   })
   .catch((err) => {
