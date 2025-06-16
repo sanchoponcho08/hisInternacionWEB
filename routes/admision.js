@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const sequelize = require("../modelo/Conexion");
+const sequelize = require("../modelo/conexion");
 const Paciente = require("../modelo/Paciente");
 const Cama = require("../modelo/Cama");
 const Internacion = require("../modelo/Internacion");

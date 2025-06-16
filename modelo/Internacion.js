@@ -1,5 +1,5 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("./Conexion");
+const sequelize = require("./conexion");
 const Paciente = require("./Paciente");
 const Cama = require("./Cama");
 const Medico = require("./Medico");
