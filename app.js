@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const sequelize = require("./modelo/Conexion");
+const sequelize = require("./modelo/conexion");
 const path = require("path");
 const session = require("express-session");
 const flash = require("connect-flash");
