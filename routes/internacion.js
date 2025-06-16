@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const sequelize = require("../modelo/conexion");
+const sequelize = require("../modelo/Conexion");
 const Internacion = require("../modelo/Internacion");
 const Paciente = require("../modelo/Paciente");
 const Cama = require("../modelo/Cama");
 const Habitacion = require("../modelo/Habitacion");
-const Ala = require("../modelo/ala");
-const E = require("../modelo/ala");
+const Ala = require("../modelo/Ala");
+const E = require("../modelo/Ala");
 const EvaluacionEnfermeria = require("../modelo/EvaluacionEnfermeria");
 
 router.get("/:id/asignar-cama", async (req, res) => {

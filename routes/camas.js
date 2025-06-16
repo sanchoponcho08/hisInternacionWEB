@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Ala = require("../modelo/ala");
+const Ala = require("../modelo/Ala");
 const Habitacion = require("../modelo/habitacion");
 const Cama = require("../modelo/Cama");
 

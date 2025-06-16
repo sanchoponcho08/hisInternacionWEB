@@ -1,11 +1,10 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("./conexion");
+const sequelize = require("./Conexion");
 
 class EvaluacionEnfermeria extends Model {}
 
 EvaluacionEnfermeria.init(
   {
-    // El ID y la FK a Internacion se manejan con las asociaciones
     fecha_hora: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

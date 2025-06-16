@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const sequelize = require("./modelo/conexion");
+const sequelize = require("./modelo/Conexion");
 const path = require("path");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -42,7 +42,7 @@ const Paciente = require("./modelo/Paciente");
 const Internacion = require("./modelo/Internacion");
 const Cama = require("./modelo/Cama");
 const Habitacion = require("./modelo/Habitacion");
-const Ala = require("./modelo/ala");
+const Ala = require("./modelo/Ala");
 const Medico = require("./modelo/Medico");
 const EvaluacionEnfermeria = require("./modelo/EvaluacionEnfermeria");
 
