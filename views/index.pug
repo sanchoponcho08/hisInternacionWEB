@@ -1,31 +1,20 @@
 extends layout
 
 block content
-  .container.col-xxl-8.px-4.py-5.text-center
-    img.d-block.mx-auto.mb-4(src="/img/sistemhisimg.png", alt="Logo HIS", width="120")
-    h1.display-5.fw-bold.text-body-emphasis Gestión de Internaciones Hospitalarias
-    .col-lg-6.mx-auto
-      p.lead.mb-4 Sistema para gestionar el proceso de internación de pacientes en el hospital.
-      .d-grid.gap-2.d-sm-flex.justify-content-sm-center
-        a.btn.btn-primary.btn-lg.px-4.gap-3(href="/admision") Nuevo Ingreso
+  .container.vh-100.d-flex.align-items-center.justify-content-center
+    .text-center
+      img.d-block.mx-auto.mb-4(src="/img/sistemhisimg.png", alt="Logo HIS", style="max-width: 150px;")
+      
+      h1.display-4.fw-bold.text-body-emphasis Gestión Hospitalaria
+      p.lead.mb-5 Sistema de admisión y gestión de pacientes.
+      
+      .d-grid.gap-3.d-sm-flex.justify-content-sm-center
+        
+        a.btn.btn-primary.btn-lg.px-4(href="/admision") Iniciar Admisión
 
-  .container.px-4.py-5
-    h2.pb-2.border-bottom Accesos Directos
-    .row.g-4.py-5.row-cols-1.row-cols-lg-3
-      .col.d-flex.align-items-start
-        div
-          h3.fw-bold.mb-0.fs-4.text-body-emphasis Registrar Paciente
-          p Añade nuevos pacientes al sistema antes de su admisión.
-          a.btn.btn-outline-primary(href="/pacientes/new") Ir a Pacientes
+        form(action="/admision", method="POST", style="margin:0;")
+          input(type="hidden", name="tipo_ingreso", value="Emergencia")
+          input(type="hidden", name="motivo", value="Ingreso por Guardia")
+          button.btn.btn-danger.btn-lg.px-4(type="submit") Ingreso por Emergencia
 
-      .col.d-flex.align-items-start
-        div
-          h3.fw-bold.mb-0.fs-4.text-body-emphasis Administrar Admisiones
-          p Gestiona la lista de internaciones activas y pendientes.
-          a.btn.btn-outline-primary(href="/admision") Ir a Admisiones
-
-      .col.d-flex.align-items-start
-        div
-          h3.fw-bold.mb-0.fs-4.text-body-emphasis Altas Médicas
-          p Da de alta a pacientes internados que ya están recuperados.
-          a.btn.btn-outline-primary(href="/admision") Ver Pacientes Activos
+        a.btn.btn-outline-secondary.btn-lg.px-4(href="/pacientes") Gestionar Pacientes
