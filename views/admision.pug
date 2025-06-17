@@ -2,10 +2,16 @@ extends layout
 
 block content
   .container.mt-4
-    .d-flex.justify-content-between.align-items-center.mb-4
-      h1.mb-0 Internaciones
-      div
-        button.btn.btn-outline-secondary.btn-sm Filtar por Estado
+    .d-flex.flex-wrap.justify-content-between.align-items-center.mb-4.pb-2.border-bottom
+      h1.mb-0.me-3 Internaciones
+      
+      .flex-grow-1.me-3(style="max-width: 250px;")
+        input#filtroDNI.form-control(type="text", placeholder="Filtrar por DNI...")
+
+      .btn-group(role="group")
+        button.btn.btn-sm.btn-outline-secondary.filtro-estado.active(type="button", data-estado="TODOS") Todos
+        button.btn.btn-sm.btn-outline-success.filtro-estado(type="button", data-estado="ACTIVA") Activas
+        button.btn.btn-sm.btn-outline-warning.filtro-estado(type="button", data-estado="PENDIENTE") Pendientes
 
     .accordion.mb-4#accordionNuevoIngreso
       .accordion-item
@@ -38,10 +44,15 @@ block content
       if internaciones.length > 0
         each internacion in internaciones
           .col-md-6.col-lg-4
-            .card.h-100.internacion-card(class=`estado-${internacion.estado.toLowerCase()}`)
+            .card.h-100.internacion-card(
+              class=`estado-${internacion.estado.toLowerCase()}`,
+              data-dni=internacion.Paciente.dni,
+              data-estado=internacion.estado
+            )
               .card-header.d-flex.justify-content-between.align-items-center
                 h5.mb-0.text-truncate #{internacion.Paciente.nombre_completo}
-                span.badge(class=(internacion.estado === 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-success'))= internacion.estado
+                - const estadoClase = internacion.estado === 'PENDIENTE' ? 'bg-warning text-dark' : (internacion.estado === 'ACTIVA' ? 'bg-success' : 'bg-secondary');
+                span.badge(class=estadoClase)= internacion.estado
               .card-body
                 p.card-text
                   strong DNI: 
@@ -60,3 +71,42 @@ block content
       else
         .col-12
           .alert.alert-light.text-center No hay internaciones para mostrar.
+
+block scripts
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const filtroDniInput = document.getElementById('filtroDNI');
+      const botonesEstado = document.querySelectorAll('.filtro-estado');
+      const internacionCards = document.querySelectorAll('.internacion-card');
+      let estadoActivo = 'TODOS';
+
+      function filtrarTarjetas() {
+        const textoFiltro = filtroDniInput.value.toLowerCase();
+
+        internacionCards.forEach(card => {
+          const dniPaciente = card.dataset.dni.toLowerCase();
+          const estadoCard = card.dataset.estado.toUpperCase();
+
+          const coincideDni = dniPaciente.includes(textoFiltro);
+          const coincideEstado = (estadoActivo === 'TODOS' || estadoCard === estadoActivo);
+
+          if (coincideDni && coincideEstado) {
+            card.parentElement.style.display = '';
+          } else {
+            card.parentElement.style.display = 'none';
+          }
+        });
+      }
+
+      filtroDniInput.addEventListener('keyup', filtrarTarjetas);
+
+      botonesEstado.forEach(boton => {
+        boton.addEventListener('click', function() {
+          botonesEstado.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          estadoActivo = this.dataset.estado;
+          filtrarTarjetas();
+        });
+      });
+    });
