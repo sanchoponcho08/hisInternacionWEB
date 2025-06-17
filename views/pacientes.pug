@@ -62,6 +62,7 @@ block content
       tbody
         each paciente in pacientes
           tr(
+            data-id=paciente.id,
             data-dni=paciente.dni,
             data-nombre=paciente.nombre_completo,
             data-fecha=paciente.fecha_nacimiento,
@@ -120,60 +121,72 @@ block content
             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Cerrar       
 block scripts
   script.
-    document.getElementById('busquedaDNI').addEventListener('input', function () {
-      const filtro = this.value.toLowerCase();
-      const filas = document.querySelectorAll('#tablaPacientes tbody tr');
-      filas.forEach(fila => {
-        const dni = fila.children[0].textContent.toLowerCase();
-        fila.style.display = dni.includes(filtro) ? '' : 'none';
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('busquedaDNI').addEventListener('input', function () {
+        const filtro = this.value.toLowerCase();
+        const filas = document.querySelectorAll('#tablaPacientes tbody tr');
+        filas.forEach(fila => {
+          const dni = fila.children[0].textContent.toLowerCase();
+          fila.style.display = dni.includes(filtro) ? '' : 'none';
+        });
       });
-    });
 
-    const filas = document.querySelectorAll("#tablaPacientes tbody tr");
-    const modal = new bootstrap.Modal(document.getElementById('pacienteModal'));
+      const filas = document.querySelectorAll("#tablaPacientes tbody tr");
+      const modalElement = document.getElementById('pacienteModal');
+      const modal = new bootstrap.Modal(modalElement);
+      const formEditar = document.getElementById("formEditarPaciente");
+      let pacienteIdActual = null;
 
-    filas.forEach(function (fila) {
-      fila.addEventListener("click", function () {
-        const datos = fila.dataset;
-        document.getElementById("modalDni").value = datos.dni || '';
-        document.getElementById("modalNombre").value = datos.nombre || '';
-        document.getElementById("modalFecha").value = datos.fecha || '';
-        document.getElementById("modalSexo").value = datos.sexo || '';
-        document.getElementById("modalDireccion").value = datos.direccion || '';
-        document.getElementById("modalTelefono").value = datos.telefono || '';
-        document.getElementById("modalContacto").value = datos.contacto || '';
-        document.getElementById("modalObra").value = datos.obra || '';
-        document.getElementById("modalLocalidad").value = datos.localidad || '';
+      filas.forEach(fila => {
+        fila.addEventListener("click", () => {
+          const datos = fila.dataset;
+          pacienteIdActual = datos.id;
 
-        document.getElementById("eliminarBtn").onclick = function () {
-          if (confirm("¿Seguro que querés eliminar este paciente?")) {
-            fetch(`/pacientes/eliminar/${datos.dni}`, { method: 'DELETE' })
-              .then(res => res.ok ? location.reload() : alert("Error al eliminar"));
-          }
+          document.getElementById("modalNombre").value = datos.nombre || '';
+          document.getElementById("modalFecha").value = new Date(datos.fecha).toISOString().split('T')[0];
+          document.getElementById("modalSexo").value = datos.sexo || '';
+          document.getElementById("modalDireccion").value = datos.direccion || '';
+          document.getElementById("modalTelefono").value = datos.telefono || '';
+          document.getElementById("modalContacto").value = datos.contacto || '';
+          document.getElementById("modalObra").value = datos.obra || '';
+          document.getElementById("modalLocalidad").value = datos.localidad || '';
+
+          document.getElementById("eliminarBtn").onclick = function () {
+            if (confirm("¿Seguro que querés eliminar este paciente?")) {
+              fetch(`/pacientes/eliminar/${pacienteIdActual}`, { method: 'DELETE' })
+                .then(res => res.ok ? location.reload() : alert("Error al eliminar. Verifique que el paciente no tenga internaciones asociadas."));
+            }
+          };
+
+          modal.show();
+        });
+      });
+
+      formEditar.addEventListener("submit", function (e) {
+        e.preventDefault();
+        
+        const body = {
+          nombre_completo: document.getElementById("modalNombre").value,
+          fecha_nacimiento: document.getElementById("modalFecha").value,
+          sexo: document.getElementById("modalSexo").value,
+          direccion: document.getElementById("modalDireccion").value,
+          telefono: document.getElementById("modalTelefono").value,
+          contacto_emergencia: document.getElementById("modalContacto").value,
+          obra_social: document.getElementById("modalObra").value,
+          localidad: document.getElementById("modalLocalidad").value
         };
 
-        modal.show();
+        fetch(`/pacientes/editar/${pacienteIdActual}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+        .then(res => {
+          if (res.ok) {
+            location.reload();
+          } else {
+            alert("Error al guardar los cambios. Verifique que el DNI no esté duplicado.");
+          }
+        });
       });
-    });
-
-    document.getElementById("formEditarPaciente").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const dni = document.getElementById("modalDni").value;
-      const body = {
-        nombre_completo: document.getElementById("modalNombre").value,
-        fecha_nacimiento: document.getElementById("modalFecha").value,
-        sexo: document.getElementById("modalSexo").value,
-        direccion: document.getElementById("modalDireccion").value,
-        telefono: document.getElementById("modalTelefono").value,
-        contacto_emergencia: document.getElementById("modalContacto").value,
-        obra_social: document.getElementById("modalObra").value,
-        localidad: document.getElementById("modalLocalidad").value
-      };
-
-      fetch(`/pacientes/editar/${dni}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-      .then(res => res.ok ? location.reload() : alert("Error al guardar los cambios"));
     });
