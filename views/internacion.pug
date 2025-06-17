@@ -1,61 +1,89 @@
 extends layout
 
 block content
-  h2.text-center.mb-4 Ficha de Internación del Paciente
+  .container.py-4
+    if internacion
+      h1.text-center.mb-5 Ficha de Internación
 
-  .card.shadow.mb-4
-    .card-body
-      h5.text-primary Datos del Paciente
-      dl.row
-        dt.col-sm-3 Nombre completo
-        dd.col-sm-9 Juan Pérez
+      .card.mb-4
+        .card-header Datos del Paciente
+        .card-body
+          dl.row.p-2.ficha-datos
+            dt.col-sm-3 Nombre
+            dd.col-sm-9 #{internacion.Paciente.nombre_completo}
+            dt.col-sm-3 DNI
+            dd.col-sm-9 #{internacion.Paciente.dni}
+            dt.col-sm-3 Fecha de Nacimiento
+            dd.col-sm-9 #{new Date(internacion.Paciente.fecha_nacimiento).toLocaleDateString('es-AR')}
+            dt.col-sm-3 Sexo
+            dd.col-sm-9 #{internacion.Paciente.sexo}
 
-        dt.col-sm-3 DNI
-        dd.col-sm-9 30123456
+      .card.mb-4
+        .card-header Detalles de la Internación
+        .card-body
+          dl.row.p-2.ficha-datos
+            dt.col-sm-3 Fecha de Ingreso
+            dd.col-sm-9 #{new Date(internacion.fecha_ingreso).toLocaleString('es-AR')}
+            dt.col-sm-3 Motivo
+            dd.col-sm-9 #{internacion.motivo}
+            dt.col-sm-3 Ubicación
+            dd.col-sm-9
+              if internacion.Cama
+                | #{internacion.Cama.Habitacion.Ala.nombre} - Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}
+              else
+                span.text-warning Aún sin cama asignada.
 
-        dt.col-sm-3 Sexo
-        dd.col-sm-9 Masculino
+      .card.mb-4
+        .card-header Historial de Evaluaciones de Enfermería
+        .card-body
+          if internacion.EvaluacionEnfermeria && internacion.EvaluacionEnfermeria.length > 0
+            ul.list-group.list-group-flush
+              each evaluacion in internacion.EvaluacionEnfermeria
+                li.list-group-item
+                  .d-flex.w-100.justify-content-between
+                    h6.mb-1.text-muted #{new Date(evaluacion.fecha_hora).toLocaleString('es-AR')}
+                  p.mb-1 #{evaluacion.observaciones}
+                  small.text-primary TA: #{evaluacion.presion_arterial || 'N/A'} | FC: #{evaluacion.frecuencia_cardiaca || 'N/A'} lpm | FR: #{evaluacion.frecuencia_respiratoria || 'N/A'} rpm | Temp: #{evaluacion.temperatura || 'N/A'}°C
+          else
+            p.p-3.text-muted No hay evaluaciones de enfermería registradas.
 
-        dt.col-sm-3 Fecha de nacimiento
-        dd.col-sm-9 1990-01-01
+      if internacion.estado === 'ACTIVA'
+        .card.mb-4
+          .card-header Registrar Nueva Evaluación de Enfermería
+          .card-body.p-4
+            form(action=`/internaciones/${internacion.id}/evaluaciones`, method="POST")
+              .row
+                .col-md-3.mb-3
+                  label.form-label(for="presion_arterial") Presión Arterial
+                  input.form-control#presion_arterial(type="text", name="presion_arterial", placeholder="Ej: 120/80")
+                .col-md-3.mb-3
+                  label.form-label(for="frecuencia_cardiaca") Frec. Cardíaca (lpm)
+                  input.form-control#frecuencia_cardiaca(type="number", name="frecuencia_cardiaca")
+                .col-md-3.mb-3
+                  label.form-label(for="frecuencia_respiratoria") Frec. Resp. (rpm)
+                  input.form-control#frecuencia_respiratoria(type="number", name="frecuencia_respiratoria")
+                .col-md-3.mb-3
+                  label.form-label(for="temperatura") Temperatura (°C)
+                  input.form-control#temperatura(type="number", step="0.1", name="temperatura")
+              .mb-3
+                label.form-label(for="observaciones") Observaciones
+                textarea.form-control#observaciones(name="observaciones", rows="4", placeholder="Describa el estado general del paciente, novedades, etc.", required)
+              .text-end
+                button.btn.btn-primary(type="submit") Guardar Evaluación
 
-  .card.shadow.mb-4
-    .card-body
-      h5.text-primary Detalles de la Internación
-      dl.row
-        dt.col-sm-3 Fecha de ingreso
-        dd.col-sm-9 2025-06-01
-
-        dt.col-sm-3 Derivado por guardia
-        dd.col-sm-9 Sí
-
-        dt.col-sm-3 Ala / Habitación / Cama
-        dd.col-sm-9 Norte / 202 / Cama 1
-
-        dt.col-sm-3 Motivo de internación
-        dd.col-sm-9 Dolor abdominal agudo
-
-  .card.shadow
-    .card-body
-      h5.text-primary Evaluación de Enfermería
-      p Se tomó temperatura, presión y frecuencia. Se informó malestar leve y náuseas.
-      button.btn.btn-outline-primary.mt-2(type="button") Ver evolución médica
-    
-  .card.shadow.mt-4.mb-5
-     .card-body
-      h5.text-primary Alta Médica
-      form(action="/alta" method="POST")
-        .row.mb-3
-            .col-md-6
-                label.form-label.text-muted.small Fecha de Alta
-                input.form-control.bg-body-tertiary.border-0.rounded-2.px-3.py-2(type="date" name="fecha_alta" required)
-
-            .col-md-6
-                label.form-label.text-muted.small Motivo de Alta
-                textarea.form-control.bg-body-tertiary.border-0.rounded-2.px-3.py-2(style="resize: none")(name="motivo" rows="1" required)
-
-      input(type="hidden" name="pacienteId" value="123") 
-
-      .row
-        .col-md-12
-           button.btn.btn-success.mt-2.px-4.py-2.rounded-3(type="submit") Confirmar Alta
+        .card.mb-4
+          .card-header Alta Hospitalaria
+          .card-body.p-4
+            form(action=`/internaciones/${internacion.id}/alta`, method="POST")
+              .row
+                .col-md-4.mb-3
+                  label.form-label(for="fecha_alta") Fecha de Alta
+                  input.form-control#fecha_alta(type="date", name="fecha_alta", required)
+                .col-md-8.mb-3
+                  label.form-label(for="motivo_alta") Motivo del Alta
+                  input.form-control#motivo_alta(type="text", name="motivo_alta", placeholder="Ej: Mejoría clínica, alta voluntaria...", required)
+              .text-end
+                button.btn.btn-success(type="submit") Confirmar Alta
+                
+    else
+      .alert.alert-danger Internación no encontrada.
