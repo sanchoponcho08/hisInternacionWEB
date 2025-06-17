@@ -2,142 +2,141 @@ extends layout
 
 block content
   .container.mt-4
-    h2.text-center.mb-4 Registrar nuevo paciente
+    h2.text-center.mb-4 Pacientes del Sistema
+    .accordion.mb-4#accordionNuevoPaciente
+      .accordion-item
+        h2.accordion-header#headingOne
+          button.accordion-button.collapsed(type='button', data-bs-toggle='collapse', data-bs-target='#collapseOne')
+            | Registrar Nuevo Paciente
+        #collapseOne.accordion-collapse.collapse(data-bs-parent='#accordionNuevoPaciente')
+          .accordion-body
+            form(action="/pacientes", method="POST")
+              .row.g-3
+                .col-md-6
+                  label.form-label Nombre completo
+                  input.form-control(type="text", name="nombre_completo", required)
+                .col-md-6
+                  label.form-label DNI
+                  input.form-control(type="number", name="dni", required)
+                .col-md-6
+                  label.form-label Sexo
+                  select.form-select(name="sexo", required)
+                    option(value="Masculino") Masculino
+                    option(value="Femenino") Femenino
+                    option(value="Otro") Otro
+                .col-md-6
+                  label.form-label Fecha de nacimiento
+                  input.form-control(type="date", name="fecha_nacimiento", required)
+                .col-md-6
+                  label.form-label Dirección
+                  input.form-control(type="text", name="direccion")
+                .col-md-6
+                  label.form-label Teléfono
+                  input.form-control(type="text", name="telefono")
+                .col-md-6
+                  label.form-label Contacto de Emergencia
+                  input.form-control(type="text", name="contacto_emergencia")
+                .col-md-6
+                  label.form-label Obra Social
+                  input.form-control(type="text", name="obra_social")
+                .col-md-12
+                  label.form-label Localidad
+                  input.form-control(type="text", name="localidad")
+              .text-end.mt-3
+                button.btn.btn-primary(type="submit") Registrar Paciente
 
-    form(action="/pacientes" method="POST").mb-5
-      .row.g-3
-        .col-md-6
-          label.form-label Nombre completo
-          input.form-control(type="text" name="nombre_completo" required)
+    .card
+      .card-header.d-flex.justify-content-between.align-items-center
+        h5.mb-0 Pacientes Registrados
+        .flex-grow-1.ms-3(style="max-width: 300px;")
+          input#busquedaDNI.form-control(type="text", placeholder="Buscar paciente por DNI...")
+      .card-body.p-0
+        .table-responsive
+          table#tablaPacientes.table.table-hover.mb-0
+            thead
+              tr
+                th DNI
+                th Nombre
+                th Fecha Nac.
+                th Sexo
+                th Obra Social
+            tbody
+              each paciente in pacientes
+                tr(
+                  data-bs-toggle="offcanvas",
+                  data-bs-target="#pacienteOffcanvas",
+                  data-id=paciente.id,
+                  data-dni=paciente.dni,
+                  data-nombre=paciente.nombre_completo,
+                  data-fecha=paciente.fecha_nacimiento,
+                  data-sexo=paciente.sexo,
+                  data-direccion=paciente.direccion,
+                  data-telefono=paciente.telefono,
+                  data-contacto=paciente.contacto_emergencia,
+                  data-obra=paciente.obra_social,
+                  data-localidad=paciente.localidad
+                )
+                  td= paciente.dni
+                  td= paciente.nombre_completo
+                  td= new Date(paciente.fecha_nacimiento).toLocaleDateString('es-AR')
+                  td= paciente.sexo
+                  td= paciente.obra_social
 
-        .col-md-6
-          label.form-label DNI
-          input.form-control(type="number" name="dni" required)
-
-        .col-md-6
-          label.form-label Sexo
-          select.form-select(name="sexo" required)
+  .offcanvas.offcanvas-end(tabindex='-1', id='pacienteOffcanvas')
+    .offcanvas-header
+      h5.offcanvas-title Detalle del Paciente
+      button.btn-close(type='button', data-bs-dismiss='offcanvas')
+    .offcanvas-body
+      form#formEditarPaciente
+        .mb-3
+          label.form-label Nombre:
+          input.form-control(type="text", id="modalNombre", name="nombre_completo")
+        .mb-3
+          label.form-label Fecha Nac.:
+          input.form-control(type="date", id="modalFecha", name="fecha_nacimiento")
+        .mb-3
+          label.form-label Sexo:
+          select.form-control(id="modalSexo", name="sexo")
             option(value="Masculino") Masculino
             option(value="Femenino") Femenino
             option(value="Otro") Otro
+        .mb-3
+          label.form-label Dirección:
+          input.form-control(type="text", id="modalDireccion", name="direccion")
+        .mb-3
+          label.form-label Teléfono:
+          input.form-control(type="text", id="modalTelefono", name="telefono")
+        .mb-3
+          label.form-label Contacto Emergencia:
+          input.form-control(type="text", id="modalContacto", name="contacto_emergencia")
+        .mb-3
+          label.form-label Obra Social:
+          input.form-control(type="text", id="modalObra", name="obra_social")
+        .mb-3
+          label.form-label Localidad:
+          input.form-control(type="text", id="modalLocalidad", name="localidad")
 
-        .col-md-6
-          label.form-label Fecha de nacimiento
-          input.form-control(type="date" name="fecha_nacimiento" required)
+        .mt-4.d-flex.justify-content-end.gap-2
+          button#eliminarBtn.btn.btn-outline-danger(type="button") Eliminar
+          button.btn.btn-primary(type="submit") Guardar Cambios
 
-        .col-md-6
-          label.form-label Dirección
-          input.form-control(type="text" name="direccion")
-
-        .col-md-6
-          label.form-label Teléfono
-          input.form-control(type="text" name="telefono")
-
-        .col-md-6
-          label.form-label Contacto de Emergencia
-          input.form-control(type="text" name="contacto_emergencia")
-
-        .col-md-6
-          label.form-label Obra Social
-          input.form-control(type="text" name="obra_social")
-
-        .col-md-6
-          label.form-label Localidad
-          input.form-control(type="text" name="localidad")
-
-      .text-center
-        button.btn.btn-primary.mt-3(type="submit") Registrar Paciente
-
-    hr
-
-    h3.text-center.mt-5 Pacientes Registrados
-    input#busquedaDNI.form-control.mb-3(type="text", placeholder="Filtrar por DNI...")
-    table#tablaPacientes.table.table-bordered.table-hover.mt-3
-      thead.table-dark
-        tr
-          th DNI
-          th Nombre
-          th Fecha Nac.
-          th Sexo
-          th Obra Social
-      tbody
-        each paciente in pacientes
-          tr(
-            data-id=paciente.id,
-            data-dni=paciente.dni,
-            data-nombre=paciente.nombre_completo,
-            data-fecha=paciente.fecha_nacimiento,
-            data-sexo=paciente.sexo,
-            data-direccion=paciente.direccion,
-            data-telefono=paciente.telefono,
-            data-contacto=paciente.contacto_emergencia,
-            data-obra=paciente.obra_social,
-            data-localidad=paciente.localidad
-          )
-            td= paciente.dni
-            td= paciente.nombre_completo
-            td= paciente.fecha_nacimiento
-            td= paciente.sexo
-            td= paciente.obra_social
-
-
-    div#pacienteModal.modal.fade(tabindex='-1')
-      .modal-dialog
-        .modal-content
-          .modal-header
-            h5.modal-title Detalle del Paciente
-            button.btn-close(type='button', data-bs-dismiss='modal')
-          .modal-body
-            form#formEditarPaciente
-              input(type="hidden", id="modalDni")
-              .mb-2
-                label Nombre:
-                input.form-control(type="text", id="modalNombre")
-              .mb-2
-                label Fecha Nac.:
-                input.form-control(type="date", id="modalFecha")
-              .mb-2
-                label Sexo:
-                select.form-control(id="modalSexo")
-                  option(value="Masculino") Masculino
-                  option(value="Femenino") Femenino
-                  option(value="Otro") Otro
-              .mb-2
-                label Dirección:
-                input.form-control(type="text", id="modalDireccion")
-              .mb-2
-                label Teléfono:
-                input.form-control(type="text", id="modalTelefono")
-              .mb-2
-                label Contacto Emergencia:
-                input.form-control(type="text", id="modalContacto")
-              .mb-2
-                label Obra Social:
-                input.form-control(type="text", id="modalObra")
-              .mb-2
-                label Localidad:
-                input.form-control(type="text", id="modalLocalidad")
-              .modal-footer
-                button#guardarBtn.btn.btn-success(type="submit") Guardar Cambios
-                button#eliminarBtn.btn.btn-danger(type="button") Eliminar
-                button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Cerrar       
 block scripts
   script.
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('busquedaDNI').addEventListener('input', function () {
+      const filtroDniInput = document.getElementById('busquedaDNI');
+      const filas = document.querySelectorAll('#tablaPacientes tbody tr');
+      const offcanvasElement = document.getElementById('pacienteOffcanvas');
+      const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+      const formEditar = document.getElementById('formEditarPaciente');
+      let pacienteIdActual = null;
+
+      filtroDniInput.addEventListener('keyup', function () {
         const filtro = this.value.toLowerCase();
-        const filas = document.querySelectorAll('#tablaPacientes tbody tr');
         filas.forEach(fila => {
-          const dni = fila.children[0].textContent.toLowerCase();
+          const dni = fila.querySelector('td:first-child').textContent.toLowerCase();
           fila.style.display = dni.includes(filtro) ? '' : 'none';
         });
       });
-
-      const filas = document.querySelectorAll("#tablaPacientes tbody tr");
-      const modalElement = document.getElementById('pacienteModal');
-      const modal = new bootstrap.Modal(modalElement);
-      const formEditar = document.getElementById("formEditarPaciente");
-      let pacienteIdActual = null;
 
       filas.forEach(fila => {
         fila.addEventListener("click", () => {
@@ -152,16 +151,20 @@ block scripts
           document.getElementById("modalContacto").value = datos.contacto || '';
           document.getElementById("modalObra").value = datos.obra || '';
           document.getElementById("modalLocalidad").value = datos.localidad || '';
-
-          document.getElementById("eliminarBtn").onclick = function () {
-            if (confirm("¿Seguro que querés eliminar este paciente?")) {
-              fetch(`/pacientes/eliminar/${pacienteIdActual}`, { method: 'DELETE' })
-                .then(res => res.ok ? location.reload() : alert("Error al eliminar. Verifique que el paciente no tenga internaciones asociadas."));
-            }
-          };
-
-          modal.show();
         });
+      });
+
+      document.getElementById("eliminarBtn").addEventListener('click', () => {
+        if (pacienteIdActual && confirm("¿Seguro que querés eliminar este paciente?")) {
+          fetch(`/pacientes/eliminar/${pacienteIdActual}`, { method: 'DELETE' })
+            .then(res => {
+              if (res.ok) {
+                location.reload();
+              } else {
+                alert("Error al eliminar. Verifique que el paciente no tenga internaciones asociadas.");
+              }
+            });
+        }
       });
 
       formEditar.addEventListener("submit", function (e) {
