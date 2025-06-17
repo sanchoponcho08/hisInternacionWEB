@@ -19,6 +19,7 @@ block content
           select.form-select(name="sexo" required)
             option(value="Masculino") Masculino
             option(value="Femenino") Femenino
+            option(value="Otro") Otro
 
         .col-md-6
           label.form-label Fecha de nacimiento
@@ -98,8 +99,9 @@ block content
               .mb-2
                 label Sexo:
                 select.form-control(id="modalSexo")
-                  option(value="masculino") Masculino
-                  option(value="femenino") Femenino
+                  option(value="Masculino") Masculino
+                  option(value="Femenino") Femenino
+                  option(value="Otro") Otro
               .mb-2
                 label Dirección:
                 input.form-control(type="text", id="modalDireccion")
