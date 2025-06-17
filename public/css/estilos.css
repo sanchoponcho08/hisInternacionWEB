@@ -25,3 +25,32 @@ body {
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.internacion-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 1px solid #dee2e6;
+
+  border-left-width: 5px;
+}
+
+.internacion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.internacion-card.estado-pendiente {
+  border-left-color: #ffc107;
+}
+
+.internacion-card.estado-activa {
+  border-left-color: #198754;
+}
+
+.internacion-card.estado-finalizada {
+  border-left-color: #6c757d;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e7f1ff;
+  color: #0c63e4;
+}

@@ -1,94 +1,62 @@
-
-extends layout
+extends ../layout
 
 block content
   .container.mt-4
-    h1.mb-4 Gestión de Admisiones
-    .card.mb-5
-      .card-header
-        h4 Registrar Nueva Admisión
-      .card-body
-        form(action="/admision", method="POST")
-          .mb-3
-            label.form-label(for="dni_paciente") DNI del Paciente
-            input.form-control#dni_paciente(type="text", name="dni_paciente", list="lista_pacientes", placeholder="Escriba el DNI del paciente", required)
-            datalist#lista_pacientes
-              each paciente in pacientes
-                option(value=paciente.dni) #{paciente.nombre_completo}
-          .mb-3
-            label.form-label(for="motivo") Motivo de la Admisión
-            textarea.form-control#motivo(name="motivo", rows="3", placeholder="Ej: Neumonía, control post-operatorio...", required)
-            
-          .row
-            .col-md-6.mb-3
-              label.form-label(for="tipo_ingreso") Tipo de Ingreso
-              select.form-select#tipo_ingreso(name="tipo_ingreso", required)
-                option(value="Programado" selected) Programado
-                option(value="Derivacion") Derivación
-                option(value="Emergencia") Emergencia
-            .col-md-6.d-flex.align-items-center
-              .form-check
-                input.form-check-input#derivado_guardia(type="checkbox", name="derivado_guardia")
-                label.form-check-label(for="derivado_guardia") Derivado de Guardia
+    .d-flex.justify-content-between.align-items-center.mb-4
+      h1.mb-0 Internaciones
+      div
+        button.btn.btn-outline-secondary.btn-sm Filtar por Estado
 
-          button.btn.btn-primary(type="submit") Iniciar Admisión
-    hr
-    h2.mt-4 Internaciones Activas y Pendientes
-    .table-responsive
-      table.table.table-striped.table-hover
-        thead
-          tr
-            th Fecha Ingreso
-            th Paciente
-            th DNI
-            th Motivo
-            th Estado
-            th Cama Asignada
-            th Acciones
-        tbody
-          if internaciones.length > 0
-            each internacion in internaciones
-              tr
-                td= new Date(internacion.fecha_ingreso).toLocaleDateString('es-AR')
-                td 
-                  a(href=`/internaciones/${internacion.id}`)= internacion.Paciente.nombre_completo
-                td= internacion.Paciente.dni
-                td= internacion.motivo
-                td
-                  span.badge(class=(internacion.estado === 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-success'))= internacion.estado
-                td
-                  if internacion.Cama
-                    span Hab. #{internacion.Cama.Habitacion.numero} - Cama #{internacion.Cama.numero}
-                  else
-                    span.text-muted Sin Asignar
-                td
-                  // El botón para asignar cama solo aparece si el estado es PENDIENTE
-                  if internacion.estado === 'PENDIENTE'
-                    a.btn.btn-sm.btn-info(href=`/internaciones/${internacion.id}/asignar-cama`) Asignar Cama
-          else
-            tr
-              td(colspan="7").text-center No hay internaciones activas o pendientes.
+    .accordion.mb-4#accordionNuevoIngreso
+      .accordion-item
+        h2.accordion-header#headingOne
+          button.accordion-button.collapsed(type='button', data-bs-toggle='collapse', data-bs-target='#collapseOne')
+            | Registrar Nueva Admisión
+        #collapseOne.accordion-collapse.collapse(data-bs-parent='#accordionNuevoIngreso')
+          .accordion-body
+            form(action="/admision", method="POST")
+              .row.g-3
+                .col-md-6
+                  label.form-label DNI del Paciente
+                  input.form-control(type="text", name="dni_paciente", list="lista_pacientes", placeholder="Escriba el DNI del paciente", required)
+                  datalist#lista_pacientes
+                    each paciente in pacientes
+                      option(value=paciente.dni) #{paciente.nombre_completo}
+                .col-md-6
+                  label.form-label Tipo de Ingreso
+                  select.form-select(name="tipo_ingreso", required)
+                    option(value="Programado" selected) Programado
+                    option(value="Derivacion") Derivación
+                    option(value="Emergencia") Emergencia
+                .col-12
+                  label.form-label Motivo de la Admisión
+                  textarea.form-control(name="motivo", rows="2", placeholder="Ej: Neumonía, control post-operatorio...", required)
+              .text-end.mt-3
+                button.btn.btn-primary(type="submit") Iniciar Admisión
 
-block scripts
-  script.
-    document.addEventListener('DOMContentLoaded', function() {
-      const tipoIngresoSelect = document.getElementById('tipo_ingreso');
-      const dniInput = document.getElementById('dni_paciente');
-
-      
-      function actualizarEstadoDNI() {
-        if (tipoIngresoSelect.value === 'Emergencia') {
-          dniInput.required = false;
-          dniInput.placeholder = 'Opcional para Emergencias';
-        } else {
-          dniInput.required = true;
-          dniInput.placeholder = 'Escriba el DNI del paciente';
-        }
-      }
-
-      
-      actualizarEstadoDNI();
-
-      
-      tipoIngresoSelect.addEventListener('change', actualizarEstadoDNI);
-    });
+    .row.g-4
+      if internaciones.length > 0
+        each internacion in internaciones
+          .col-md-6.col-lg-4
+            .card.h-100.internacion-card(class=`estado-${internacion.estado.toLowerCase()}`)
+              .card-header.d-flex.justify-content-between.align-items-center
+                h5.mb-0.text-truncate #{internacion.Paciente.nombre_completo}
+                span.badge(class=(internacion.estado === 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-success'))= internacion.estado
+              .card-body
+                p.card-text
+                  strong DNI: 
+                  | #{internacion.Paciente.dni}
+                  br
+                  strong Motivo: 
+                  | #{internacion.motivo}
+                  br
+                  strong Fecha Ingreso: 
+                  | #{new Date(internacion.fecha_ingreso).toLocaleString('es-AR')}
+              .card-footer.bg-white.border-0.text-end
+                if internacion.estado === 'PENDIENTE'
+                  a.btn.btn-info.btn-sm(href=`/internaciones/${internacion.id}/asignar-cama`) Asignar Cama
+                else if internacion.estado === 'ACTIVA'
+                  a.btn.btn-primary.btn-sm(href=`/internaciones/${internacion.id}`) Ver Ficha
+      else
+        .col-12
+          .alert.alert-light.text-center No hay internaciones para mostrar.
